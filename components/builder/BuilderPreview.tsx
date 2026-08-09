@@ -1,9 +1,45 @@
-import React from "react";
+"use client";
 
-export default function BuilderPreview() {
+import React from "react";
+import BuilderCard from "../card/BuilderCard";
+import Button from "../shared/Button";
+
+interface BuilderPreviewProps {
+  photo: File | null;
+  name: string;
+  role: string;
+  stack: string;
+  onBackToEdit: () => void;
+}
+
+export default function BuilderPreview({
+  photo,
+  name,
+  role,
+  stack,
+  onBackToEdit,
+}: BuilderPreviewProps) {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 text-zinc-400">
-      Builder Preview Placeholder
+    <div className="w-full flex flex-col items-center gap-8">
+      <div className="w-full flex justify-center">
+        <BuilderCard
+          photo={photo}
+          name={name}
+          role={role}
+          stack={stack}
+          builderTitle="THE BUILDER"
+        />
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-[360px]">
+        <Button
+          variant="secondary"
+          onClick={onBackToEdit}
+          className="w-full"
+        >
+          Edit Details
+        </Button>
+      </div>
     </div>
   );
 }
