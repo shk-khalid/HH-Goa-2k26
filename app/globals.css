@@ -1,33 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  --ocean: #172A46;
-  --teal: #285C63;
-  --seafoam: #E8F0E8;
-  --coral: #FF6B35;
-  --violet: #6C63FF;
-  --lime: #C7F36B;
-  --text: #172A46;
-  --muted: #55706F;
-  --border: #A9C2BA;
+  --teal-deep: #0B3B35;
+  --sand-warm: #F4E9C8;
+  --lime-acid: #D7E65A;
+  --coral-accent: #FF6B4A;
+  --indigo-accent: #5B5CE2;
+  --dark-green: #072722;
 }
 
 @theme {
-  --color-ocean: var(--ocean);
-  --color-teal: var(--teal);
-  --color-seafoam: var(--seafoam);
-  --color-coral: var(--coral);
-  --color-violet: var(--violet);
-  --color-lime: var(--lime);
-  --color-text-main: var(--text);
-  --color-text-muted: var(--muted);
-  --color-border-main: var(--border);
+  --color-teal-deep: var(--teal-deep);
+  --color-sand-warm: var(--sand-warm);
+  --color-lime-acid: var(--lime-acid);
+  --color-coral-accent: var(--coral-accent);
+  --color-indigo-accent: var(--indigo-accent);
+  --color-dark-green: var(--dark-green);
   
   --font-sans: var(--font-geist-sans), sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
 }
 
 body {
-  background-color: var(--seafoam);
-  color: var(--text);
+  background-color: var(--teal-deep);
+  color: var(--sand-warm);
 }

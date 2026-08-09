@@ -108,37 +108,37 @@ export default function UploadZone({ photo, onPhotoChange }: UploadZoneProps) {
           onDragLeave={handleDrag}
           onDrop={handleDrop}
           onClick={onButtonClick}
-          className={`group flex flex-col items-center justify-center border p-12 transition-all duration-200 cursor-pointer select-none min-h-[240px] bg-zinc-950/40 relative overflow-hidden ${
+          className={`group flex flex-col items-center justify-center border p-12 transition-all duration-150 cursor-pointer select-none min-h-[240px] relative overflow-hidden bg-dark-green/30 ${
             isDragActive
-              ? "border-zinc-400 bg-zinc-900/60"
-              : "border-zinc-800/80 hover:border-zinc-600 hover:bg-zinc-900/30"
+              ? "border-sand-warm bg-dark-green/60"
+              : "border-sand-warm/20 hover:border-sand-warm/60 hover:bg-dark-green/45"
           }`}
         >
           {/* Subtle technical corner marks */}
-          <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-zinc-700"></div>
-          <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-zinc-700"></div>
-          <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-zinc-700"></div>
-          <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-zinc-700"></div>
+          <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-lime-acid/55"></div>
+          <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-lime-acid/55"></div>
+          <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-lime-acid/55"></div>
+          <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-lime-acid/55"></div>
 
-          <div className="font-mono text-xl text-zinc-500 mb-3 transition-transform duration-200 group-hover:-translate-y-0.5">
+          <div className="font-mono text-xl text-coral-accent mb-3 transition-transform duration-200 group-hover:-translate-y-0.5 font-bold">
             +
           </div>
-          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-200 text-center mb-1.5">
+          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-sand-warm text-center mb-1.5">
             UPLOAD YOUR PHOTO
           </p>
-          <p className="font-mono text-[8px] text-zinc-500 uppercase tracking-[0.15em] text-center">
+          <p className="font-mono text-[8px] text-sand-warm/60 uppercase tracking-[0.15em] text-center">
             JPG · PNG · HEIC · MAX 15MB
           </p>
         </div>
       ) : (
-        <div className="border border-zinc-800 p-6 bg-zinc-950 relative flex flex-col sm:flex-row items-stretch gap-6">
-          <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-zinc-700"></div>
-          <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-zinc-700"></div>
-          <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-zinc-700"></div>
-          <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-zinc-700"></div>
+        <div className="border border-sand-warm/20 p-6 bg-dark-green/20 relative flex flex-col sm:flex-row items-stretch gap-6">
+          <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-lime-acid/55"></div>
+          <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-lime-acid/55"></div>
+          <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-lime-acid/55"></div>
+          <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-lime-acid/55"></div>
 
           {previewUrl && (
-            <div className="relative w-32 h-32 bg-zinc-900 border border-zinc-800 overflow-hidden shrink-0 flex items-center justify-center mx-auto sm:mx-0">
+            <div className="relative w-32 h-32 bg-dark-green/40 border border-sand-warm/20 overflow-hidden shrink-0 flex items-center justify-center mx-auto sm:mx-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={previewUrl}
@@ -149,13 +149,13 @@ export default function UploadZone({ photo, onPhotoChange }: UploadZoneProps) {
           )}
           <div className="flex-1 flex flex-col justify-between items-center sm:items-start text-center sm:text-left min-w-0 py-1">
             <div className="space-y-2 w-full">
-              <span className="font-mono text-[8px] uppercase tracking-[0.25em] text-zinc-500 font-bold block">
+              <span className="font-mono text-[8px] uppercase tracking-[0.25em] text-sand-warm/60 font-bold block">
                 PHOTO
               </span>
-              <p className="font-mono text-xs text-white truncate font-medium">
+              <p className="font-mono text-xs text-sand-warm truncate font-bold">
                 {photo.name}
               </p>
-              <p className="font-mono text-[9px] text-zinc-400 uppercase tracking-widest">
+              <p className="font-mono text-[9px] text-sand-warm/60 uppercase tracking-widest">
                 SIZE: {formatFileSize(photo.size)}
               </p>
             </div>
@@ -163,7 +163,7 @@ export default function UploadZone({ photo, onPhotoChange }: UploadZoneProps) {
             <button
               onClick={onButtonClick}
               type="button"
-              className="mt-6 font-mono text-[9px] text-zinc-400 hover:text-white uppercase tracking-[0.2em] font-bold border-b border-zinc-800 hover:border-white pb-0.5 transition-colors"
+              className="mt-6 font-mono text-[9px] text-lime-acid hover:text-sand-warm uppercase tracking-[0.2em] font-bold border-b border-sand-warm/20 hover:border-lime-acid pb-0.5 transition-colors"
             >
               REPLACE PHOTO
             </button>
@@ -172,7 +172,7 @@ export default function UploadZone({ photo, onPhotoChange }: UploadZoneProps) {
       )}
 
       {error && (
-        <p className="mt-3 font-mono text-[9px] text-red-500 uppercase tracking-widest font-bold">
+        <p className="mt-3 font-mono text-[9px] text-coral-accent uppercase tracking-widest font-bold">
           {error}
         </p>
       )}
