@@ -7,7 +7,7 @@ import Footer from "@/components/shared/Footer";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-teal-deep text-warm-white font-sans selection:bg-warm-white selection:text-teal-deep overflow-x-hidden">
+    <div className="flex flex-col min-h-screen bg-teal-deep text-warm-white font-sans selection:bg-warm-white selection:text-teal-deep">
       {/* Scroll-driven Hero poster section */}
       <Hero />
 
