@@ -5,9 +5,10 @@ import React, { useRef, useState, useEffect } from "react";
 interface UploadZoneProps {
   photo: File | null;
   onPhotoChange: (file: File | null) => void;
+  compact?: boolean;
 }
 
-export default function UploadZone({ photo, onPhotoChange }: UploadZoneProps) {
+export default function UploadZone({ photo, onPhotoChange, compact = false }: UploadZoneProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -108,37 +109,43 @@ export default function UploadZone({ photo, onPhotoChange }: UploadZoneProps) {
           onDragLeave={handleDrag}
           onDrop={handleDrop}
           onClick={onButtonClick}
-          className={`group flex flex-col items-center justify-center border p-12 transition-all duration-150 cursor-pointer select-none min-h-60 relative overflow-hidden bg-dark-green/30 ${
+          className={`group flex items-center gap-4 border border-dashed rounded-xl transition-all duration-150 cursor-pointer select-none relative overflow-hidden bg-teal-deep/10 ${
+            compact ? "p-4 min-h-[72px]" : "flex-col justify-center p-12 min-h-60"
+          } ${
             isDragActive
-              ? "border-sand-warm bg-dark-green/60"
-              : "border-sand-warm/20 hover:border-sand-warm/60 hover:bg-dark-green/45"
+              ? "border-hot-pink bg-teal-deep/30"
+              : "border-warm-white/20 hover:border-hot-pink hover:bg-teal-deep/20"
           }`}
         >
-          {/* Subtle technical corner marks */}
-          <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-lime-acid/55"></div>
-          <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-lime-acid/55"></div>
-          <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-lime-acid/55"></div>
-          <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-lime-acid/55"></div>
-
-          <div className="font-mono text-xl text-coral-accent mb-3 transition-transform duration-200 group-hover:-translate-y-0.5 font-bold">
-            +
+          {/* Upload Icon */}
+          <div className="w-10 h-10 rounded-full border border-warm-white/20 flex items-center justify-center shrink-0 group-hover:border-hot-pink transition-colors">
+            <svg 
+              className="w-5 h-5 text-warm-white/70 group-hover:text-hot-pink transition-colors" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
           </div>
-          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-sand-warm text-center mb-1.5">
-            UPLOAD YOUR PHOTO
-          </p>
-          <p className="font-mono text-[8px] text-sand-warm/60 uppercase tracking-[0.15em] text-center">
-            JPG · PNG · HEIC · MAX 15MB
-          </p>
+
+          {/* Text Description */}
+          <div className="text-left">
+            <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-warm-white">
+              Drop your photo here or <span className="text-hot-pink group-hover:text-bright-yellow underline transition-colors">click to browse</span>
+            </p>
+            <p className="font-mono text-[8px] text-warm-white/40 uppercase tracking-widest mt-0.5">
+              JPG, PNG, WEBP or HEIC • Max 15MB
+            </p>
+          </div>
         </div>
       ) : (
-        <div className="border border-sand-warm/20 p-6 bg-dark-green/20 relative flex flex-col sm:flex-row items-stretch gap-6">
-          <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-lime-acid/55"></div>
-          <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-lime-acid/55"></div>
-          <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-lime-acid/55"></div>
-          <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-lime-acid/55"></div>
-
+        <div className={`border border-warm-white/20 bg-teal-deep/20 relative flex items-center gap-4 rounded-xl ${
+          compact ? "p-3" : "flex-col sm:flex-row p-6"
+        }`}>
           {previewUrl && (
-            <div className="relative w-32 h-32 bg-dark-green/40 border border-sand-warm/20 overflow-hidden shrink-0 flex items-center justify-center mx-auto sm:mx-0">
+            <div className="relative w-12 h-12 rounded-lg bg-teal-deep/40 border border-warm-white/10 overflow-hidden shrink-0 flex items-center justify-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={previewUrl}
@@ -147,34 +154,34 @@ export default function UploadZone({ photo, onPhotoChange }: UploadZoneProps) {
               />
             </div>
           )}
-          <div className="flex-1 flex flex-col justify-between items-center sm:items-start text-center sm:text-left min-w-0 py-1">
-            <div className="space-y-2 w-full">
-              <span className="font-mono text-[8px] uppercase tracking-[0.25em] text-sand-warm/60 font-bold block">
-                PHOTO
-              </span>
-              <p className="font-mono text-xs text-sand-warm truncate font-bold">
-                {photo.name}
-              </p>
-              <p className="font-mono text-[9px] text-sand-warm/60 uppercase tracking-widest">
-                SIZE: {formatFileSize(photo.size)}
-              </p>
-            </div>
-            
-            <button
-              onClick={onButtonClick}
-              type="button"
-              className="mt-6 font-mono text-[9px] text-lime-acid hover:text-sand-warm uppercase tracking-[0.2em] font-bold border-b border-sand-warm/20 hover:border-lime-acid pb-0.5 transition-colors"
-            >
-              REPLACE PHOTO
-            </button>
+          <div className="flex-1 text-left min-w-0">
+            <p className="font-mono text-[9px] uppercase tracking-widest text-warm-white/40 font-bold">
+              PHOTO UPLOADED
+            </p>
+            <p className="font-mono text-[10px] font-bold text-warm-white truncate max-w-[200px]">
+              {photo.name}
+            </p>
+            <p className="font-mono text-[8px] text-warm-white/60 uppercase tracking-wider">
+              SIZE: {formatFileSize(photo.size)}
+            </p>
           </div>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onPhotoChange(null);
+            }}
+            className="font-mono text-[9px] uppercase tracking-widest text-hot-pink hover:text-bright-yellow font-bold underline transition-colors shrink-0"
+          >
+            Replace
+          </button>
         </div>
       )}
 
       {error && (
-        <p className="mt-3 font-mono text-[9px] text-coral-accent uppercase tracking-widest font-bold">
+        <div className="mt-2 text-[9px] font-mono text-hot-pink font-bold uppercase tracking-widest animate-pulse">
           {error}
-        </p>
+        </div>
       )}
     </div>
   );
