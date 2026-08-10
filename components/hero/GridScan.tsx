@@ -402,9 +402,8 @@ export const GridScan: React.FC<GridScanProps> = ({
         clearTimeout(leaveTimer);
         leaveTimer = null;
       }
-      const rect = el.getBoundingClientRect();
-      const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      const ny = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+      const nx = (e.clientX / window.innerWidth) * 2 - 1;
+      const ny = -((e.clientY / window.innerHeight) * 2 - 1);
       lookTarget.current.set(nx, ny);
     };
     const onClick = async () => {
@@ -439,14 +438,14 @@ export const GridScan: React.FC<GridScanProps> = ({
         Math.max(0, snapBackDelay || 0)
       );
     };
-    el.addEventListener('mousemove', onMove);
-    el.addEventListener('mouseenter', onEnter);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseenter', onEnter);
     if (scanOnClick) el.addEventListener('click', onClick);
-    el.addEventListener('mouseleave', onLeave);
+    window.addEventListener('mouseleave', onLeave);
     return () => {
-      el.removeEventListener('mousemove', onMove);
-      el.removeEventListener('mouseenter', onEnter);
-      el.removeEventListener('mouseleave', onLeave);
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseenter', onEnter);
+      window.removeEventListener('mouseleave', onLeave);
       if (scanOnClick) el.removeEventListener('click', onClick);
       if (leaveTimer) clearTimeout(leaveTimer);
     };
