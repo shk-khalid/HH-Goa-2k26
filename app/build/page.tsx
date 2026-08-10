@@ -36,9 +36,9 @@ export default function BuildPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-teal-deep text-warm-white font-sans selection:bg-warm-white selection:text-teal-deep overflow-x-hidden">
-      {/* Header */}
-      <header className="w-full relative z-30 backdrop-blur-md bg-teal-deep/30 border-b border-warm-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
-        <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center text-warm-white">
+      {/* Floating Island Header */}
+      <header className="w-full max-w-7xl mx-auto px-6 pt-4 sm:pt-6 relative z-30">
+        <div className="w-full backdrop-blur-md bg-teal-deep/40 border border-warm-white/10 shadow-[0_10px_35px_rgba(0,0,0,0.25)] rounded-full px-6 py-3 flex justify-between items-center text-warm-white">
           <div className="flex items-center gap-4">
             <Logo />
             <span className="h-4 border-l border-warm-white/20"></span>

@@ -3,7 +3,7 @@ import React from "react";
 export default function Footer() {
   return (
     <footer 
-      className="w-full py-[4vw] sm:py-6 text-center font-mono relative z-30 border-t border-white/10 mt-auto backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.1),_0_-4px_30px_rgba(0,0,0,0.2)]"
+      className="w-full py-[4vw] sm:py-6 text-center font-mono relative z-30 border-t border-white/10 mt-auto backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_-4px_30px_rgba(0,0,0,0.2)]"
       style={{ backgroundColor: "rgba(0, 0, 0, 0.45)" }}
     >
       <div className="max-w-7xl mx-auto px-4 flex flex-col items-center justify-center gap-1 sm:gap-2">

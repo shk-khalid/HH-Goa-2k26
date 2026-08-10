@@ -33,7 +33,7 @@ export default function Hero() {
       {/* Layer 1: Background Base */}
       <div className="absolute inset-0 bg-teal-deep z-0"></div>
 
-      {/* Layer 2: WebGL GridScan Background (LOCKED - VISUALLY UNCHANGED) */}
+      {/* Layer 2: WebGL GridScan Background */}
       <div className="absolute inset-0 z-10 opacity-35 pointer-events-none overflow-hidden">
         <div 
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto"
@@ -60,12 +60,12 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Header */}
-      <header className="w-full relative z-30 backdrop-blur-md bg-teal-deep/30 border-b border-warm-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
-        <div className="max-w-7xl mx-auto px-[4vw] lg:px-6 py-[3vw] lg:py-5 flex justify-between items-center text-warm-white">
-          <div className="flex items-center gap-[2vw] lg:gap-4">
+      {/* Floating Island Header */}
+      <header className="w-full max-w-7xl mx-auto px-[4vw] lg:px-6 pt-4 sm:pt-6 relative z-30">
+        <div className="w-full backdrop-blur-md bg-teal-deep/40 border border-warm-white/10 shadow-[0_10px_35px_rgba(0,0,0,0.25)] rounded-2xl px-6 py-3 flex justify-between items-center text-warm-white">
+          <div className="flex items-center gap-4">
             <Logo />
-            <span className="h-[3vw] lg:h-4 border-l border-warm-white/20"></span>
+            <span className="h-4 border-l border-warm-white/20"></span>
             <span className="font-mono text-[1.1vw] lg:text-[8px] uppercase tracking-[0.2em] text-warm-white/45 font-bold whitespace-nowrap">
               GOA, INDIA · 28—31 OCT 2026
             </span>
@@ -77,7 +77,7 @@ export default function Hero() {
       </header>
 
       {/* Main Body Grid */}
-      <main className="max-w-7xl w-full h-auto mx-auto px-[4vw] lg:px-6 py-[6vw] lg:py-16 grid grid-cols-12 gap-[3vw] lg:gap-8 items-center relative z-30 flex-grow">
+      <main className="max-w-7xl w-full h-auto mx-auto px-[4vw] lg:px-6 pt-[4vw] lg:pt-8 pb-[10vw] lg:pb-20 grid grid-cols-12 gap-[3vw] lg:gap-8 items-center relative z-30 grow">
         
         {/* Left Column: Coordinates, Subtitle, SVG Header, and primary CTA */}
         <div className="col-span-7 flex flex-col justify-end w-full text-left">
@@ -94,12 +94,12 @@ export default function Hero() {
           </span>
 
           {/* Giant SVG Heading */}
-          <div className="w-full max-w-[560px] h-auto select-none">
+          <div className="w-full max-w-140 h-auto select-none">
             <EventHeaderLogo className="w-full h-auto" />
           </div>
  
            {/* Under SVG horizontal divider */}
-           <div className="w-full border-b border-warm-white/10 my-6 max-w-[420px] sm:max-w-[500px] lg:max-w-[560px]"></div>
+           <div className="w-full border-b border-warm-white/10 my-6 max-w-105 sm:max-w-125 lg:max-w-140"></div>
  
            {/* Action button */}
            <div className="w-full sm:w-auto pointer-events-auto">
