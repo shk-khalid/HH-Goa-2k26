@@ -2,26 +2,28 @@
 
 :root {
   --teal-deep: #0B3B35;
-  --sand-warm: #F4E9C8;
-  --lime-acid: #D7E65A;
-  --coral-accent: #FF6B4A;
-  --indigo-accent: #5B5CE2;
-  --dark-green: #072722;
+  --goa-green: #0B6839;
+  --hot-pink: #FF0080;
+  --bright-yellow: #FEE101;
+  --warm-white: #FFFBE8;
+  --pure-white: #FFFFFF;
+  --black: #000000;
 }
 
 @theme {
   --color-teal-deep: var(--teal-deep);
-  --color-sand-warm: var(--sand-warm);
-  --color-lime-acid: var(--lime-acid);
-  --color-coral-accent: var(--coral-accent);
-  --color-indigo-accent: var(--indigo-accent);
-  --color-dark-green: var(--dark-green);
+  --color-goa-green: var(--goa-green);
+  --color-hot-pink: var(--hot-pink);
+  --color-bright-yellow: var(--bright-yellow);
+  --color-warm-white: var(--warm-white);
+  --color-pure-white: var(--pure-white);
+  --color-black: var(--black);
   
-  --font-sans: var(--font-geist-sans), sans-serif;
-  --font-mono: var(--font-geist-mono), monospace;
+  --font-sans: var(--font-imbue), sans-serif;
+  --font-mono: var(--font-victor-mono), monospace;
 }
 
 body {
   background-color: var(--teal-deep);
-  color: var(--sand-warm);
+  color: var(--warm-white);
 }

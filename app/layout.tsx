@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Imbue, Victor_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const imbue = Imbue({
+  variable: "--font-imbue",
   subsets: ["latin"],
+  weight: ["500", "700", "800"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const victorMono = Victor_Mono({
+  variable: "--font-victor-mono",
   subsets: ["latin"],
+  weight: ["400", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -23,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="bg-zinc-950 text-zinc-50 font-sans antialiased">{children}</body>
+    <html lang="en" className={`${imbue.variable} ${victorMono.variable}`}>
+      <body className="bg-teal-deep text-warm-white font-sans antialiased">{children}</body>
     </html>
   );
 }

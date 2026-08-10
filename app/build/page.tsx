@@ -34,18 +34,18 @@ export default function BuildPage() {
   const isSubmitDisabled = !photo || !name.trim() || !role.trim();
 
   return (
-    <div className="flex flex-col min-h-screen bg-teal-deep text-sand-warm font-sans selection:bg-sand-warm selection:text-teal-deep">
+    <div className="flex flex-col min-h-screen bg-teal-deep text-warm-white font-sans selection:bg-warm-white selection:text-teal-deep">
       {/* Header */}
       <header className="w-full">
         <div className="max-w-7xl mx-auto px-6 py-6 md:py-8 flex justify-between items-center">
           <Link href="/">
             <Logo />
           </Link>
-          <div className="font-mono text-[9px] uppercase tracking-[0.25em] text-sand-warm font-bold">
+          <div className="font-mono text-[9px] uppercase tracking-[0.25em] text-hot-pink font-bold">
             #FRAMEINGOA
           </div>
         </div>
-        <div className="w-full border-b border-sand-warm/10"></div>
+        <div className="w-full border-b border-warm-white/10"></div>
       </header>
 
       {/* Main Content */}
@@ -54,11 +54,11 @@ export default function BuildPage() {
           <div className="flex flex-col gap-10">
             {/* Editorial Heading */}
             <div className="space-y-4 max-w-md">
-              <h1 className="text-4xl sm:text-[3.25rem] font-black uppercase tracking-tight leading-[0.95] text-sand-warm">
+              <h1 className="text-4xl sm:text-[3.25rem] font-bold uppercase tracking-tight leading-[0.95] text-warm-white">
                 BUILD YOUR<br />
                 BUILDER ID
               </h1>
-              <p className="font-mono text-[9px] uppercase tracking-widest text-sand-warm/60 font-bold leading-relaxed">
+              <p className="font-mono text-[9px] uppercase tracking-widest text-warm-white/60 font-bold leading-relaxed">
                 Show what you build. Bring your builder identity to Goa.
               </p>
             </div>
@@ -70,7 +70,7 @@ export default function BuildPage() {
 
             {/* Form */}
             {step === "form" && (
-              <div className="w-full pt-8 border-t border-sand-warm/10 animate-in fade-in duration-300">
+              <div className="w-full pt-8 border-t border-warm-white/10 animate-in fade-in duration-300">
                 <BuilderForm
                   name={name}
                   role={role}
@@ -88,10 +88,10 @@ export default function BuildPage() {
           <div className="flex flex-col gap-8">
             {/* Editorial Heading for Preview */}
             <div className="space-y-2 text-center">
-              <h1 className="text-3xl font-black uppercase tracking-tight text-sand-warm leading-none">
+              <h1 className="text-3xl font-bold uppercase tracking-tight text-warm-white leading-none">
                 YOUR BUILDER ID
               </h1>
-              <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-sand-warm/60 font-bold">
+              <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-warm-white/60 font-bold">
                 Preview your HH Goa 2026 developer profile card
               </p>
             </div>
@@ -110,9 +110,9 @@ export default function BuildPage() {
 
       {/* Footer */}
       <footer className="w-full mt-auto">
-        <div className="w-full border-t border-sand-warm/10"></div>
+        <div className="w-full border-t border-warm-white/10"></div>
         <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-          <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-sand-warm/40 font-bold">
+          <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-warm-white/40 font-bold">
             HH GOA 2026 · GOA, INDIA
           </p>
         </div>
