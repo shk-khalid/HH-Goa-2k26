@@ -6,6 +6,7 @@ import Logo from "@/components/shared/Logo";
 import UploadZone from "@/components/upload/UploadZone";
 import BuilderForm from "@/components/builder/BuilderForm";
 import BuilderPreview from "@/components/builder/BuilderPreview";
+import Footer from "@/components/shared/Footer";
 
 type AppStep = "upload" | "form" | "preview";
 
@@ -34,22 +35,30 @@ export default function BuildPage() {
   const isSubmitDisabled = !photo || !name.trim() || !role.trim();
 
   return (
-    <div className="flex flex-col min-h-screen bg-teal-deep text-warm-white font-sans selection:bg-warm-white selection:text-teal-deep">
+    <div className="flex flex-col min-h-screen bg-teal-deep text-warm-white font-sans selection:bg-warm-white selection:text-teal-deep overflow-x-hidden">
       {/* Header */}
-      <header className="w-full">
-        <div className="max-w-7xl mx-auto px-6 py-6 md:py-8 flex justify-between items-center">
-          <Link href="/">
+      <header className="w-full relative z-30 backdrop-blur-md bg-teal-deep/30 border-b border-warm-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+        <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center text-warm-white">
+          <div className="flex items-center gap-4">
             <Logo />
-          </Link>
-          <div className="font-mono text-[9px] uppercase tracking-[0.25em] text-hot-pink font-bold">
-            #FRAMEINGOA
+            <span className="h-4 border-l border-warm-white/20"></span>
+            <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/45 font-bold">
+              GOA, INDIA · 2026
+            </span>
+          </div>
+          <div>
+            <Link 
+              href="/" 
+              className="font-mono text-[9px] uppercase tracking-[0.2em] text-hot-pink font-bold hover:text-bright-yellow transition-colors"
+            >
+              ← BACK TO HOME
+            </Link>
           </div>
         </div>
-        <div className="w-full border-b border-warm-white/10"></div>
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col justify-center max-w-xl w-full mx-auto px-6 py-12 md:py-20">
+      <main className="flex-1 flex flex-col justify-center max-w-xl w-full mx-auto px-6 py-12 md:py-20 z-30">
         {step !== "preview" ? (
           <div className="flex flex-col gap-10">
             {/* Editorial Heading */}
@@ -108,15 +117,8 @@ export default function BuildPage() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="w-full mt-auto">
-        <div className="w-full border-t border-warm-white/10"></div>
-        <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-          <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-warm-white/40 font-bold">
-            HH GOA 2026 · GOA, INDIA
-          </p>
-        </div>
-      </footer>
+      {/* Shared Website Footer */}
+      <Footer />
     </div>
   );
 }

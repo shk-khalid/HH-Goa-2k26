@@ -61,8 +61,8 @@ export default function Hero() {
       </div>
 
       {/* Header */}
-      <header className="w-full relative z-30">
-        <div className="max-w-7xl mx-auto px-[4vw] lg:px-6 py-[4vw] lg:py-8 flex justify-between items-center text-warm-white">
+      <header className="w-full relative z-30 backdrop-blur-md bg-teal-deep/30 border-b border-warm-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+        <div className="max-w-7xl mx-auto px-[4vw] lg:px-6 py-[3vw] lg:py-5 flex justify-between items-center text-warm-white">
           <div className="flex items-center gap-[2vw] lg:gap-4">
             <Logo />
             <span className="h-[3vw] lg:h-4 border-l border-warm-white/20"></span>
@@ -74,7 +74,6 @@ export default function Hero() {
             #FRAMEINGOA
           </div>
         </div>
-        <div className="w-full border-b border-warm-white/10"></div>
       </header>
 
       {/* Main Body Grid */}
@@ -140,6 +139,6 @@ export default function Hero() {
          </div>
  
        </main>
-     </div>
-   );
- }
+    </div>
+  );
+}

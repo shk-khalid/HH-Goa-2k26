@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import Hero from "@/components/hero/Hero";
+import Footer from "@/components/shared/Footer";
 
 export default function Home() {
   return (
@@ -45,20 +46,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Simple Footer */}
-      <footer className="w-full bg-black/20 z-50">
-        <div className="w-full border-t border-warm-white/5"></div>
-        <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
-          <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-warm-white/40 font-bold">
-            HH GOA 2026 · GOA, INDIA · 28—31 OCT 2026
-          </p>
-          <div className="flex gap-4 font-mono text-[9px] uppercase tracking-[0.2em] text-warm-white/40 font-bold">
-            <span>[ BUILD ]</span>
-            <span>[ SHIP ]</span>
-            <span>[ REPEAT ]</span>
-          </div>
-        </div>
-      </footer>
+      {/* Shared Website Footer */}
+      <Footer />
     </div>
   );
 }
