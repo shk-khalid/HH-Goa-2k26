@@ -8,10 +8,10 @@ import { GridScan } from "./GridScan";
 export default function Hero() {
   return (
     <div className="relative w-full h-screen bg-teal-deep select-none overflow-hidden">
-      {/* Layer 1: Background */}
+      {/* Layer 1: Background Base */}
       <div className="absolute inset-0 bg-teal-deep z-0"></div>
 
-      {/* Layer 2: WebGL GridScan Background */}
+      {/* Layer 2: WebGL GridScan Background (LOCKED - VISUALLY UNCHANGED) */}
       <div className="absolute inset-0 z-10 opacity-35 pointer-events-none">
         <GridScan
           sensitivity={0.55}
@@ -56,50 +56,62 @@ export default function Hero() {
         <div className="w-full border-b border-sand-warm/10"></div>
       </header>
 
-      {/* Layer 3: Giant Event Typography */}
-      <div className="absolute inset-0 z-20 flex flex-col justify-center px-6 md:px-16">
-        <div className="max-w-7xl mx-auto w-full">
-          <h1 className="text-[12vw] sm:text-[10vw] font-black uppercase tracking-tight leading-[0.8] text-sand-warm">
-            BUILD<br />
-            IN<br />
-            <span className="text-lime-acid">GOA</span>
-          </h1>
-        </div>
-      </div>
+      {/* Foreground Composition Layer (z-30) */}
+      <div className="absolute inset-0 z-30 flex flex-col justify-between max-w-7xl mx-auto px-6 py-28 pointer-events-none">
+        
+        {/* Top Spacer to push content below the header */}
+        <div className="h-1"></div>
 
-      {/* Layer 4: Secondary Typography / CTA */}
-      <div className="absolute inset-0 z-30 flex flex-col justify-between max-w-7xl mx-auto px-6 py-24 md:py-28 pointer-events-none">
-        {/* Offset layout spacing */}
-        <div className="mt-28 md:mt-32 max-w-xs md:max-w-sm pointer-events-auto">
-          <p className="font-mono text-[10px] uppercase tracking-wider text-sand-warm/70 leading-relaxed">
-            An experimental builders gathering on the coastal line. Bring your tech stack, meet other makers, and design your Goa ID card.
-          </p>
+        {/* Asymmetrical Big Typography and Small Meta */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end w-full">
+          
+          <div className="lg:col-span-8 space-y-4">
+            <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-lime-acid font-black block">
+              [ HH GOA BUILDERS ASSEMBLY ]
+            </span>
+            <h1 className="text-[10vw] sm:text-[8vw] lg:text-[7vw] font-black uppercase tracking-tight leading-[0.85] text-sand-warm">
+              BUILD<br />
+              SOMETHING<br />
+              IN <span className="text-lime-acid">GOA</span>
+            </h1>
+          </div>
+
+          <div className="lg:col-span-4 space-y-6 lg:border-l lg:border-sand-warm/10 lg:pl-8 py-2">
+            <p className="font-mono text-[10px] uppercase tracking-wider text-sand-warm/65 leading-relaxed max-w-xs">
+              An experimental creative technology gathering on the coastline. Join engineers, designers, and builders to shape the future.
+            </p>
+            <div className="flex flex-col gap-1.5 font-mono text-[8px] uppercase tracking-widest text-sand-warm/40">
+              <div>SYS.LOC // 15.49° N / 73.82° E</div>
+              <div>BUILD STATUS // ACTIVE</div>
+              <div>SHIP DATE // 28—31 OCT 2026</div>
+            </div>
+          </div>
+
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-between items-end gap-6 pointer-events-auto">
-          {/* CTA Button */}
-          <div className="w-full sm:w-auto">
+        {/* Bottom CTA and Footer metadata row */}
+        <div className="flex flex-col sm:flex-row justify-between items-end gap-6 w-full pt-8 border-t border-sand-warm/10">
+          
+          {/* Action button */}
+          <div className="w-full sm:w-auto pointer-events-auto">
             <Link 
               href="/build" 
-              className="group inline-flex items-center gap-6 px-8 py-5 bg-coral-accent hover:bg-lime-acid text-teal-deep font-mono text-xs uppercase tracking-[0.2em] font-black border border-coral-accent hover:border-lime-acid transition-all duration-150 w-full justify-between"
+              className="group inline-flex items-center gap-8 px-10 py-5 bg-coral-accent hover:bg-lime-acid text-teal-deep font-mono text-xs uppercase tracking-[0.2em] font-black border border-coral-accent hover:border-lime-acid transition-all duration-150 w-full sm:w-auto justify-between active:scale-[0.98]"
             >
-              <span>[ BUILD YOUR ID ]</span>
+              <span>BUILD YOUR ID</span>
               <span className="transform transition-transform duration-200 group-hover:translate-x-1.5">→</span>
             </Link>
           </div>
-          
-          {/* Tech metadata card */}
-          <div className="hidden md:block border border-sand-warm/15 p-4 bg-dark-green/20 min-w-[200px] text-left">
-            <div className="flex justify-between text-[8px] font-mono tracking-widest text-sand-warm/60">
-              <span>EVENT STATUS //</span>
-              <span className="text-lime-acid font-bold">ACTIVE</span>
-            </div>
-            <div className="flex justify-between text-[8px] font-mono tracking-widest text-sand-warm/60 mt-1">
-              <span>TIDE RANGE //</span>
-              <span>0.8M - 1.2M</span>
-            </div>
+
+          {/* Abstract event tags */}
+          <div className="flex gap-4 font-mono text-[8px] uppercase tracking-[0.2em] text-sand-warm/40 font-bold">
+            <span>[ BUILD ]</span>
+            <span>[ SHIP ]</span>
+            <span>[ REPEAT ]</span>
           </div>
+
         </div>
+
       </div>
     </div>
   );
