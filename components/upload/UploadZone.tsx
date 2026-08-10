@@ -108,7 +108,7 @@ export default function UploadZone({ photo, onPhotoChange }: UploadZoneProps) {
           onDragLeave={handleDrag}
           onDrop={handleDrop}
           onClick={onButtonClick}
-          className={`group flex flex-col items-center justify-center border p-12 transition-all duration-150 cursor-pointer select-none min-h-[240px] relative overflow-hidden bg-dark-green/30 ${
+          className={`group flex flex-col items-center justify-center border p-12 transition-all duration-150 cursor-pointer select-none min-h-60 relative overflow-hidden bg-dark-green/30 ${
             isDragActive
               ? "border-sand-warm bg-dark-green/60"
               : "border-sand-warm/20 hover:border-sand-warm/60 hover:bg-dark-green/45"

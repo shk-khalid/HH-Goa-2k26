@@ -807,9 +807,9 @@ export const GridScan: React.FC<GridScanProps> = ({
   return (
     <div ref={containerRef} className={`relative w-full h-full overflow-hidden ${className ?? ''}`} style={style}>
       {showPreview && (
-        <div className="right-3 bottom-3 absolute bg-black shadow-[0_4px_16px_rgba(0,0,0,0.4)] border border-white/25 rounded-lg w-[220px] h-[132px] overflow-hidden font-sans text-[12px] text-white leading-[1.2] pointer-events-none">
+        <div className="right-3 bottom-3 absolute bg-black shadow-[0_4px_16px_rgba(0,0,0,0.4)] border border-white/25 rounded-lg w-55 h-33 overflow-hidden font-sans text-[12px] text-white leading-[1.2] pointer-events-none">
           <video ref={videoRef} muted playsInline autoPlay className="w-full h-full object-cover -scale-x-100" />
-          <div className="top-2 left-2 absolute bg-black/50 backdrop-blur-[4px] px-[6px] py-[2px] rounded-[6px]">
+          <div className="top-2 left-2 absolute bg-black/50 backdrop-blur-xs px-1.5 py-0.5 rounded-md">
             {enableWebcam
               ? modelsReady
                 ? uiFaceActive

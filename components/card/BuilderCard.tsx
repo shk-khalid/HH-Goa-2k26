@@ -39,7 +39,7 @@ export default function BuilderCard({
     : [];
 
   return (
-    <div className="w-full max-w-[360px] aspect-[4/5] bg-sand-warm border-2 border-teal-deep flex flex-col justify-between overflow-hidden relative selection:bg-none p-5 select-none font-mono text-teal-deep shadow-2xl">
+    <div className="w-full max-w-90 aspect-4/5 bg-sand-warm border-2 border-teal-deep flex flex-col justify-between overflow-hidden relative selection:bg-none p-5 select-none font-mono text-teal-deep shadow-2xl">
       {/* Technical Corner crosshairs */}
       <div className="absolute top-2 left-2 text-[8px] text-teal-deep/40 font-bold">+</div>
       <div className="absolute top-2 right-2 text-[8px] text-teal-deep/40 font-bold">+</div>
@@ -97,7 +97,7 @@ export default function BuilderCard({
         </div>
 
         {/* Stack items */}
-        <div className="min-h-[16px] flex flex-wrap gap-1">
+        <div className="min-h-4 flex flex-wrap gap-1">
           {stackItems.length > 0 ? (
             stackItems.map((item, idx) => (
               <span

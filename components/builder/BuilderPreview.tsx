@@ -31,7 +31,7 @@ export default function BuilderPreview({
         />
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-[360px]">
+      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-90">
         <Button
           variant="secondary"
           onClick={onBackToEdit}
