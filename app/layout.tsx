@@ -18,6 +18,9 @@ const victorMono = Victor_Mono({
 export const metadata: Metadata = {
   title: "Goaframe - Builder ID Card Generator",
   description: "HH Goa 2026 Builder ID Card Generator",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({

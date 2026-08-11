@@ -111,15 +111,21 @@ export default function BuildPage() {
 
               {/* Role Input */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="role" className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
-                  Role / What do you build? *
-                </label>
+                <div className="flex justify-between items-center">
+                  <label htmlFor="role" className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
+                    Role / What do you build? *
+                  </label>
+                  <span className="font-mono text-[7px] text-warm-white/40 uppercase tracking-widest">
+                    {role.length}/20 MAX
+                  </span>
+                </div>
                 <input
                   id="role"
                   type="text"
                   value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  placeholder="e.g. Full-Stack / Rust / AI"
+                  maxLength={20}
+                  onChange={(e) => setRole(e.target.value.slice(0, 20))}
+                  placeholder="e.g. Full-Stack / Rust"
                   required
                   className="w-full bg-teal-deep/40 border border-warm-white/20 hover:border-warm-white/40 focus:border-hot-pink px-4 py-2.5 rounded-xl font-mono text-xs text-warm-white placeholder-warm-white/30 outline-none transition-all duration-150 shadow-inner"
                 />
@@ -127,15 +133,28 @@ export default function BuildPage() {
 
               {/* Stack Input */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="stack" className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
-                  Stack / Tech Stack
-                </label>
+                <div className="flex justify-between items-center">
+                  <label htmlFor="stack" className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
+                    Stack / Tech Stack
+                  </label>
+                  <span className="font-mono text-[7px] text-warm-white/40 uppercase tracking-widest">
+                    MAX 3 TAGS
+                  </span>
+                </div>
                 <input
                   id="stack"
                   type="text"
                   value={stack}
-                  onChange={(e) => setStack(e.target.value)}
-                  placeholder="e.g. React, Node.js, WebGL (Comma separated)"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    const parts = val.split(",");
+                    if (parts.length > 3) {
+                      setStack(parts.slice(0, 3).join(","));
+                    } else {
+                      setStack(val);
+                    }
+                  }}
+                  placeholder="e.g. React, Node.js, WebGL (Max 3 tags)"
                   className="w-full bg-teal-deep/40 border border-warm-white/20 hover:border-warm-white/40 focus:border-hot-pink px-4 py-2.5 rounded-xl font-mono text-xs text-warm-white placeholder-warm-white/30 outline-none transition-all duration-150 shadow-inner"
                 />
               </div>

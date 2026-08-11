@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HH Goa 2026 Builder ID Pass Mockup</title>
+
+  <!-- QRCode JS library for client-side QR generation -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #0b6839;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .id-card {
+      position: relative;
+      width: min(90vw, 400px);
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      border-radius: 18px;
+      background: #0b6839;
+      border: 1px solid rgba(215, 230, 90, 0.3);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      color: #f4e9c8;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 16px;
+    }
+
+    .corner-bracket {
+      position: absolute;
+      color: #d7e65a;
+      font-size: 10px;
+      font-weight: bold;
+    }
+    .corner-tl { top: 8px; left: 8px; }
+    .corner-tr { top: 8px; right: 8px; }
+    .corner-bl { bottom: 8px; left: 8px; }
+    .corner-br { bottom: 8px; right: 8px; }
+
+    .lanyard-slot {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 96px;
+      height: 14px;
+      background: rgba(0,0,0,0.8);
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .lanyard-inner {
+      width: 64px;
+      height: 4px;
+      background: #0b6839;
+      border-radius: 999px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-top: 16px;
+      z-index: 10;
+    }
+
+    .header-title-main {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #f4e9c8;
+      margin: 0;
+      line-height: 1;
+    }
+
+    .header-title-sub {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      color: #d7e65a;
+      margin: 0;
+      line-height: 1;
+    }
+
+    .telemetry-box {
+      border: 1px solid rgba(215, 230, 90, 0.3);
+      border-radius: 4px;
+      padding: 6px;
+      background: rgba(4, 40, 34, 0.6);
+      font-size: 8px;
+      font-family: monospace;
+      text-align: right;
+      width: 110px;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      gap: 12px;
+      align-items: center;
+      margin: 8px 0;
+      z-index: 10;
+    }
+
+    .polaroid-card {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      background: #f4e9c8;
+      padding: 6px;
+      border-radius: 4px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .photo-window {
+      width: 100%;
+      flex: 1;
+      background: #0b6839;
+      border-radius: 2px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .photo-window img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: grayscale(100%) contrast(105%);
+    }
+
+    .field-icon {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      margin-right: 3px;
+    }
+    .field-icon svg {
+      width: 9px;
+      height: 9px;
+      stroke: rgba(244, 233, 200, 0.6);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .details-col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .field-label {
+      font-size: 7px;
+      letter-spacing: 0.15em;
+      color: rgba(244, 233, 200, 0.6);
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .field-value {
+      font-size: 11px;
+      font-weight: 800;
+      color: #f4e9c8;
+      text-transform: uppercase;
+      border-bottom: 1px dashed rgba(215, 230, 90, 0.3);
+      padding-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .builder-class-pill {
+      background: #f4e9c8;
+      border-radius: 4px;
+      padding: 6px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #092f29;
+      font-weight: 900;
+      font-size: 10px;
+    }
+
+    .coastline-svg {
+      width: 100%;
+      height: 70px;
+      margin-top: auto;
+      margin-bottom: 0;
+      border-radius: 6px;
+      background: #074d2b;
+      overflow: hidden;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(215, 230, 90, 0.2);
+      padding-top: 6px;
+      z-index: 10;
+    }
+
+    .qr-box {
+      width: 42px;
+      height: 42px;
+      background: #f4e9c8;
+      padding: 2px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #qrcode img, #qrcode canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .id-card * {
+      user-select: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="id-card" id="builderCard">
+    <div class="corner-bracket corner-tl">┌</div>
+    <div class="corner-bracket corner-tr">┐</div>
+    <div class="corner-bracket corner-bl">└</div>
+    <div class="corner-bracket corner-br">┘</div>
+
+    <div class="lanyard-slot"><div class="lanyard-inner"></div></div>
+
+    <!-- Header -->
+    <div class="card-header">
+      <div>
+        <div style="font-size: 11px; font-weight: 900; color: #f4e9c8;">HH GOA 2026</div>
+        <div style="font-size: 6.5px; color: rgba(244,233,200,0.7); letter-spacing: 0.1em; margin-top: 2px;">GOA, INDIA · 28—31 OCT 2026</div>
+        <div style="font-size: 7.5px; color: #d7e65a; font-weight: bold; margin-top: 8px;">[ HH GOA BUILDERS ASSEMBLY ]</div>
+        <div class="header-title-main" style="margin-top: 2px;">BUILDER</div>
+        <div class="header-title-sub">ID <span style="color: #FF0080;">✦</span></div>
+      </div>
+
+      <div className="telemetry-box">
+        <div style="color: #d7e65a; font-size: 8px; font-weight: bold;">#FRAMEINGOA</div>
+        <div style="color: rgba(244,233,200,0.6); font-size: 5.5px;">BUILD · SHIP · REPEAT</div>
+        <div style="margin-top: 6px; border-top: 1px solid rgba(215,230,90,0.2); padding-top: 4px;">
+          <div>SYS.LOC // GOA</div>
+          <div>15.4989° N / 73.8278° E</div>
+          <div style="color: #FF0080; font-weight: bold; margin-top: 2px;">STATUS: ACTIVE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-grid">
+      <div class="polaroid-card">
+        <div class="photo-window">
+          <img id="builderPhoto" src="/images/sunrise_cover.png" alt="Builder Photo" />
+        </div>
+        <div style="font-size: 5px; font-family: monospace; color: #092f29; font-weight: bold; text-align: right; margin-top: 4px;">
+          CHECK // 001
+        </div>
+      </div>
+
+      <div class="details-col">
+        <div>
+          <div class="field-label"><span class="field-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> BUILDER NAME</div>
+          <div class="field-value" id="builderName">KHALID SHAIKH</div>
+        </div>
+        <div>
+          <div class="field-label"><span class="field-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span> BUILDER ROLE</div>
+          <div class="field-value" id="builderRole">FULL STACK DEVELOPER</div>
+        </div>
+        <div>
+          <div class="field-label"><span class="field-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span> STACK</div>
+          <div class="field-value" id="builderStack">REACT.JS · NEXT.JS · EXPRESS.JS</div>
+        </div>
+        <div>
+          <div class="field-label">BUILDER CLASS</div>
+          <div class="builder-class-pill">
+            <span id="builderClass">TERMINAL WIZARD</span>
+            <span style="font-family: monospace; font-size: 8px; background: #092f29; color: #f4e9c8; padding: 1px 3px; border-radius: 2px;">&gt;_</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coastline Image Background -->
+    <div class="coastline-svg">
+      <img src="/images/sunrise_bg.png" alt="Sunrise Beach Background" style="width: 100%; height: 100%; object-fit: cover; object-position: center;" />
+    </div>
+
+    <!-- Footer -->
+    <div class="card-footer">
+      <div class="qr-box">
+        <div id="qrcode"></div>
+      </div>
+
+      <div style="text-align: center; font-family: monospace;">
+        <div style="font-size: 5px; color: rgba(244,233,200,0.6);">BUILDER ID</div>
+        <div style="font-size: 7px; color: #d7e65a; font-weight: bold; margin-top: 2px;" id="builderId">HHGOA-7F3K9Q</div>
+      </div>
+
+      <div style="text-align: right;">
+        <div style="font-size: 5px; font-family: monospace; color: rgba(244,233,200,0.6);">ACCESS LEVEL</div>
+        <div style="font-size: 10px; font-weight: 900; color: #d7e65a;">BUILDER</div>
+        <div style="font-size: 6px; color: #FF0080; font-weight: bold; margin-top: 2px;">ACTIVE ●</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const builder = {
+      id: "HHGOA-7F3K9Q",
+      name: "KHALID SHAIKH",
+      role: "FULL STACK DEVELOPER",
+      stack: "NEXT.JS · PYTHON · POSTGRES",
+      builderClass: "TERMINAL WIZARD",
+      photo: "/images/sunrise_cover.png"
+    };
+
+    document.getElementById("builderName").textContent = builder.name.substring(0, 18).toUpperCase();
+    document.getElementById("builderRole").textContent = builder.role.substring(0, 20).toUpperCase();
+    document.getElementById("builderStack").textContent = builder.stack.toUpperCase();
+    document.getElementById("builderClass").textContent = builder.builderClass.substring(0, 16).toUpperCase();
+    document.getElementById("builderId").textContent = builder.id.toUpperCase();
+    document.getElementById("builderPhoto").src = builder.photo;
+
+    const qrPayload = `https://goaframe.com/card/${builder.id}`;
+    new QRCode(document.getElementById("qrcode"), {
+      text: qrPayload,
+      width: 120,
+      height: 120,
+      colorDark: "#063b32",
+      colorLight: "#f4e9c8",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  </script>
+</body>
+</html>

@@ -110,7 +110,7 @@ export default function UploadZone({ photo, onPhotoChange, compact = false }: Up
           onDrop={handleDrop}
           onClick={onButtonClick}
           className={`group flex items-center gap-4 border border-dashed rounded-xl transition-all duration-150 cursor-pointer select-none relative overflow-hidden bg-teal-deep/10 ${
-            compact ? "p-4 min-h-[72px]" : "flex-col justify-center p-12 min-h-60"
+            compact ? "p-4 min-h-18" : "flex-col justify-center p-12 min-h-60"
           } ${
             isDragActive
               ? "border-hot-pink bg-teal-deep/30"
@@ -158,7 +158,7 @@ export default function UploadZone({ photo, onPhotoChange, compact = false }: Up
             <p className="font-mono text-[9px] uppercase tracking-widest text-warm-white/40 font-bold">
               PHOTO UPLOADED
             </p>
-            <p className="font-mono text-[10px] font-bold text-warm-white truncate max-w-[200px]">
+            <p className="font-mono text-[10px] font-bold text-warm-white truncate max-w-50">
               {photo.name}
             </p>
             <p className="font-mono text-[8px] text-warm-white/60 uppercase tracking-wider">
