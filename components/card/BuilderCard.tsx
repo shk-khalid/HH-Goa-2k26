@@ -138,9 +138,7 @@ export default function BuilderCard({
     : builderId;
 
   // QR Code URL pointing to profile using the unique UUID
-  const shareData = typeof window !== "undefined"
-    ? `${window.location.origin}/card/${customBuilderId || generatedId}`
-    : `https://goaframes.vercel.app/card/${customBuilderId || generatedId}`;
+  const shareData = `https://fiznydjywflsffleeoop.supabase.co/storage/v1/object/public/id-card/${customBuilderId || generatedId}.png`;
   
   useEffect(() => {
     import("qrcode").then((QRCode) => {

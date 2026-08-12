@@ -65,3 +65,12 @@ input:-webkit-autofill:active {
   font-family: var(--font-mono) !important;
   transition: background-color 5000s ease-in-out 0s;
 }
+
+/* Remove default blue focus outline rings from buttons */
+button:focus,
+button:focus-visible,
+button:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
