@@ -30,8 +30,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${imbue.variable} ${victorMono.variable}`}>
+    <html lang="en" className={`${imbue.variable} ${victorMono.variable}`} suppressHydrationWarning>
       <body className="bg-teal-deep text-warm-white font-sans antialiased overflow-x-hidden">
+        {/* Blocking script to prevent flash of content/splash screen flicker */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var played = sessionStorage.getItem('hh-goa-splash-played');
+                  if (played) {
+                    document.documentElement.classList.add('splash-played');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
         <SmoothScroller />
         <SplashScreen />
         {children}

@@ -1,94 +1,37 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
-import BuilderCard from "../card/BuilderCard";
-import { toPng } from "html-to-image";
-import { classifyBuilder } from "../../lib/image/classifyBuilder";
-import { Download, Share2, Copy, Check, Loader2, Edit3, Paperclip } from "lucide-react";
+import React, { useState, useEffect, Suspense } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import Logo from "@/components/shared/Logo";
+import Footer from "@/components/shared/Footer";
+import { classifyBuilder } from "@/lib/image/classifyBuilder";
+import { Download, Copy, Check, Paperclip } from "lucide-react";
 
-import { supabase } from "@/lib/supabase";
+function PreviewContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-interface BuilderPreviewProps {
-  photo: File | null;
-  name: string;
-  role: string;
-  stack: string;
-  builderId: string;
-  onBackToEdit: () => void;
-  onRenderComplete?: (id: string) => void;
-}
+  const id = searchParams.get("id") || "";
+  const name = searchParams.get("name") || "";
+  const role = searchParams.get("role") || "";
+  const stack = searchParams.get("stack") || "";
 
-export default function BuilderPreview({
-  photo,
-  name,
-  role,
-  stack,
-  builderId,
-  onBackToEdit,
-  onRenderComplete,
-}: BuilderPreviewProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  
-  const [renderedImageUrl, setRenderedImageUrl] = useState<string | null>(null);
-  const [isRendering, setIsRendering] = useState(true);
+  const builderClass = classifyBuilder(role, stack);
   const [copied, setCopied] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
-  const exportOptions = {
-    cacheBust: false,
-    pixelRatio: 2,
-    style: {
-      transform: "scale(1)",
-      borderRadius: "18px",
-    },
-    imagePlaceholder: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIHWNgAAIABQABNjN9GQAAAABJRnQ5ErkJggg==",
-  };
-
-  // Handle card generated event from BuilderCard callback (fires when all assets are loaded)
-  const handleCardGenerated = async (dataUrl: string) => {
-    try {
-      // Convert data URL to Blob for Supabase upload
-      const res = await fetch(dataUrl);
-      const blob = await res.blob();
-
-      // Upload the entire finished ID card PNG to Supabase storage
-      const { error } = await supabase.storage
-        .from("id-card")
-        .upload(`${builderId}.png`, blob, {
-          contentType: "image/png",
-          upsert: true,
-        });
-
-      if (error) {
-        throw error;
-      }
-
-      setRenderedImageUrl(dataUrl);
-      if (onRenderComplete) {
-        onRenderComplete(builderId);
-      }
-    } catch (err: any) {
-      console.error("Oops, card upload failed:", err);
-      // Fallback: show the rendered image locally even if upload fails
-      setRenderedImageUrl(dataUrl);
-      if (onRenderComplete) {
-        onRenderComplete(builderId);
-      }
-    } finally {
-      setIsRendering(false);
-    }
-  };
+  const publicImageUrl = `https://fiznydjywflsffleeoop.supabase.co/storage/v1/object/public/id-card/${id}.png`;
 
   const handleDownload = () => {
-    if (!renderedImageUrl) return;
     const filename = `${name.toLowerCase().replace(/[^a-z0-9]/g, "-")}-hhgoa-pass.png`;
     const link = document.createElement("a");
     link.download = filename;
-    link.href = renderedImageUrl;
+    link.href = publicImageUrl;
+    link.target = "_blank";
     link.click();
   };
 
-  // Opens the X sharing window with pre-loaded details
   const triggerTwitterIntent = () => {
     const tweetText = encodeURIComponent(
       `🌴 Just generated my official Builder Pass for HH Goa 2026! 🚀\n\n` +
@@ -108,13 +51,11 @@ export default function BuilderPreview({
   };
 
   const handleShareX = () => {
-    // Open the helper modal informing them how to download and attach it
     setIsShareModalOpen(true);
   };
 
   const handleCopyLink = () => {
-    const publicUrl = `https://fiznydjywflsffleeoop.supabase.co/storage/v1/object/public/id-card/${builderId}.png`;
-    navigator.clipboard.writeText(publicUrl)
+    navigator.clipboard.writeText(publicImageUrl)
       .then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
@@ -124,67 +65,57 @@ export default function BuilderPreview({
       });
   };
 
-  const builderClass = classifyBuilder(role, stack);
+  const handleEdit = () => {
+    router.push(
+      `/build?name=${encodeURIComponent(name)}&role=${encodeURIComponent(role)}&stack=${encodeURIComponent(stack)}&id=${id}`
+    );
+  };
 
   return (
-    <div className="w-full flex flex-col items-center gap-4">
-      {/* Off-screen target container for image generation */}
-      <div 
-        ref={cardRef} 
-        style={{ 
-          position: "absolute", 
-          left: "-9999px", 
-          top: "-9999px",
-          width: "360px",
-          height: "480px"
-        }}
-      >
-        <BuilderCard
-          photo={photo}
-          name={name}
-          role={role}
-          stack={stack}
-          builderTitle={builderClass}
-          builderId={builderId}
-          onCardGenerated={handleCardGenerated}
-        />
-      </div>
-
-      {/* Visible static image preview */}
-      <div className="w-full flex justify-center items-center">
-        {isRendering ? (
-          <div className="w-full max-w-72.5 sm:max-w-82.5 aspect-3/4 bg-[#062421]/60 border border-warm-white/10 rounded-2xl flex flex-col items-center justify-center gap-3 animate-pulse shadow-2xl relative overflow-hidden pointer-events-none">
-            <Loader2 className="w-7 h-7 text-hot-pink animate-spin" />
-            <span className="font-mono text-[7px] tracking-[0.25em] text-warm-white uppercase font-bold bg-[#0b3b35] border border-warm-white/15 rounded-lg px-3 py-1.5 shadow-lg">
-              Generating Pass...
+    <div className="flex flex-col min-h-screen bg-teal-deep text-warm-white font-sans selection:bg-warm-white selection:text-teal-deep overflow-x-hidden">
+      {/* Floating Island Header */}
+      <header className="w-full max-w-7xl mx-auto px-6 pt-4 sm:pt-6 relative z-30">
+        <div className="w-full backdrop-blur-md bg-teal-deep/40 border border-warm-white/10 shadow-[0_10px_35px_rgba(0,0,0,0.25)] rounded-2xl px-6 py-3 flex justify-between items-center text-warm-white">
+          <div className="flex items-center gap-4">
+            <Logo />
+            <span className="h-4 border-l border-warm-white/20"></span>
+            <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/45 font-bold">
+              GOA, INDIA · 2026
             </span>
           </div>
-        ) : renderedImageUrl ? (
+          <div>
+            <Link 
+              href="/" 
+              className="font-mono text-[9px] uppercase tracking-[0.2em] text-hot-pink font-bold hover:text-bright-yellow transition-colors"
+            >
+              ← BACK TO HOME
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 max-w-lg w-full mx-auto px-6 z-30 flex flex-col justify-center items-center py-3 md:py-4 gap-3">
+        {/* Editorial Heading for Preview */}
+        <div className="text-center space-y-2 max-w-md">
+          <h1 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-tight leading-none text-bright-yellow">
+            YOUR BUILDER ID
+          </h1>
+          <p className="font-mono text-[10px] text-bright-yellow/85 tracking-wider">
+            Preview your HH Goa 2026 developer profile card
+          </p>
+        </div>
+
+        {/* Visible static image preview */}
+        <div className="w-full flex justify-center items-center">
           <img
-            src={renderedImageUrl}
+            src={publicImageUrl}
             alt="HH Goa Builder Pass"
             className="w-full max-w-72.5 sm:max-w-82.5 aspect-3/4 object-contain shadow-2xl rounded-2xl animate-in fade-in duration-300 border border-warm-white/10"
           />
-        ) : (
-          <div className="text-red-400 font-mono text-xs uppercase font-bold">
-            Failed to render pass preview
-          </div>
-        )}
-      </div>
-
-      {/* Actions row */}
-      {isRendering ? (
-        <div className="flex flex-col gap-2.5 w-full max-w-72.5 sm:max-w-82.5 font-mono mt-2 animate-pulse">
-          {/* Skeleton for primary button */}
-          <div className="w-full h-11 bg-warm-white/5 border border-warm-white/10 rounded-xl" />
-          {/* Skeletons for secondary buttons */}
-          <div className="flex gap-2 w-full">
-            <div className="flex-1 h-11 bg-warm-white/5 border border-warm-white/10 rounded-xl" />
-            <div className="flex-1 h-11 bg-warm-white/5 border border-warm-white/10 rounded-xl" />
-            <div className="flex-1 h-11 bg-warm-white/5 border border-warm-white/10 rounded-xl" />
-          </div>
         </div>
-      ) : renderedImageUrl ? (
+
+        {/* Actions row */}
         <div className="flex flex-col gap-2.5 w-full max-w-72.5 sm:max-w-82.5 font-mono mt-2">
           {/* Primary Action Button: Share to X */}
           <button
@@ -225,15 +156,18 @@ export default function BuilderPreview({
             </button>
 
             <button
-              onClick={onBackToEdit}
+              onClick={handleEdit}
               className="flex-1 py-3.5 font-mono text-[9px] font-bold uppercase tracking-widest rounded-xl bg-transparent text-warm-white border border-warm-white/30 hover:border-hot-pink hover:text-hot-pink transition-all duration-150 active:scale-[0.97] flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <Edit3 className="w-3.5 h-3.5" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+                <path d="M12 20h9"/>
+                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+              </svg>
               Edit
             </button>
           </div>
         </div>
-      ) : null}
+      </main>
 
       {/* Share to X Reminder Modal */}
       {isShareModalOpen && (
@@ -280,6 +214,21 @@ export default function BuilderPreview({
           </div>
         </div>
       )}
+
+      {/* Shared Website Footer */}
+      <Footer />
     </div>
+  );
+}
+
+export default function PreviewPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col min-h-screen bg-teal-deep text-warm-white font-mono items-center justify-center gap-4">
+        <div className="animate-spin text-hot-pink text-2xl font-bold">LOADING...</div>
+      </div>
+    }>
+      <PreviewContent />
+    </Suspense>
   );
 }

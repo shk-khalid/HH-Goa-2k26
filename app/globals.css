@@ -74,3 +74,16 @@ button:active {
   box-shadow: none !important;
 }
 
+/* Remove default blue focus outline rings from inputs */
+input:focus,
+input:focus-visible,
+input:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Hide splash screen immediately if already played in session to prevent client-hydration flicker */
+.splash-played #global-splash-screen {
+  display: none !important;
+}
+

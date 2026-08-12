@@ -8,7 +8,7 @@ let hasPlayedSplash = false;
 
 export default function SplashScreen() {
   const [visible, setVisible] = useState(true);
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(true);
   const [bootLogIndex, setBootLogIndex] = useState(0);
 
   const bootLogs = [
@@ -21,10 +21,9 @@ export default function SplashScreen() {
 
   // Check if splash screen was already played in this session on mount
   useEffect(() => {
-    if (hasPlayedSplash) {
+    const hasPlayed = sessionStorage.getItem("hh-goa-splash-played");
+    if (hasPlayedSplash || hasPlayed) {
       setMounted(false);
-    } else {
-      setMounted(true);
     }
   }, []);
 
@@ -47,6 +46,7 @@ export default function SplashScreen() {
 
     const unmountTimer = setTimeout(() => {
       hasPlayedSplash = true; // Only lock the splash screen played state after a complete play sequence
+      sessionStorage.setItem("hh-goa-splash-played", "true");
       setMounted(false);
     }, 2500); // 1.8s delay + 700ms CSS fade-out transition
 
@@ -70,6 +70,7 @@ export default function SplashScreen() {
 
   return (
     <div
+      id="global-splash-screen"
       className={`fixed inset-0 z-9999 bg-[#031412] flex flex-col items-center justify-center gap-6 transition-all duration-700 ease-out select-none ${
         visible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       }`}

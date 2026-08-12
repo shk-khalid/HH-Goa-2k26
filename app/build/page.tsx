@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import Logo from "@/components/shared/Logo";
 import UploadZone from "@/components/upload/UploadZone";
 import BuilderPreview from "@/components/builder/BuilderPreview";
@@ -10,9 +11,10 @@ import Cropper from "react-easy-crop";
 import { cropImage, Area } from "@/lib/image/cropImage";
 import { Camera, Zap, Share2 } from "lucide-react";
 
-type AppStep = "form" | "preview";
+function BuildPageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-export default function BuildPage() {
   const [photo, setPhoto] = useState<File | null>(null);
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
   const [originalUrl, setOriginalUrl] = useState<string | null>(null);
@@ -20,19 +22,32 @@ export default function BuildPage() {
   const [name, setName] = useState<string>("");
   const [role, setRole] = useState<string>("");
   const [stack, setStack] = useState<string>("");
-  const [step, setStep] = useState<AppStep>("form");
+  const [isGenerating, setIsGenerating] = useState(false);
   const [cardUuid, setCardUuid] = useState<string>("");
 
+  // Pre-populate if query params are present (e.g. from Edit link)
   useEffect(() => {
-    const uuid = typeof crypto !== "undefined" && crypto.randomUUID 
-      ? crypto.randomUUID() 
-      : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-          const r = Math.random() * 16 | 0;
-          const v = c === "x" ? r : (r & 0x3 | 0x8);
-          return v.toString(16);
-        });
-    setCardUuid(uuid);
-  }, []);
+    const paramName = searchParams.get("name");
+    const paramRole = searchParams.get("role");
+    const paramStack = searchParams.get("stack");
+    const paramId = searchParams.get("id");
+
+    if (paramName) setName(paramName);
+    if (paramRole) setRole(paramRole);
+    if (paramStack) setStack(paramStack);
+    if (paramId) {
+      setCardUuid(paramId);
+    } else {
+      const uuid = typeof crypto !== "undefined" && crypto.randomUUID 
+        ? crypto.randomUUID() 
+        : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+            const r = Math.random() * 16 | 0;
+            const v = c === "x" ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+          });
+      setCardUuid(uuid);
+    }
+  }, [searchParams]);
 
   // Modal crop states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,7 +81,7 @@ export default function BuildPage() {
     e.preventDefault();
     if (isSubmitDisabled) return;
     if (croppedImage && name.trim() && role.trim() && stack.trim()) {
-      setStep("preview");
+      setIsGenerating(true);
     }
   };
 
@@ -147,9 +162,58 @@ export default function BuildPage() {
 
       {/* Main Content */}
       <main className={`flex-1 max-w-lg w-full mx-auto px-6 z-30 flex flex-col justify-center items-center transition-all duration-300 ${
-        step === "preview" ? "py-3 md:py-4 gap-3" : "py-6 md:py-10 gap-6"
+        isGenerating ? "py-3 md:py-4 gap-3" : "py-6 md:py-10 gap-6"
       }`}>
-        {step === "form" ? (
+        {isGenerating ? (
+          <div className="flex flex-col gap-3 w-full max-w-xl mx-auto items-center">
+            {/* Editorial Heading for Preview */}
+            <div className="text-center space-y-2 max-w-md">
+              <h1 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-tight leading-none text-bright-yellow">
+                YOUR BUILDER ID
+              </h1>
+              <p className="font-mono text-[10px] text-bright-yellow/85 tracking-wider">
+                Preview your HH Goa 2026 developer profile card
+              </p>
+            </div>
+
+            {/* Skeleton Card Loader */}
+            <div className="w-full max-w-72.5 sm:max-w-82.5 aspect-3/4 bg-[#062421]/60 border border-warm-white/10 rounded-2xl flex flex-col items-center justify-center gap-3 animate-pulse shadow-2xl relative overflow-hidden pointer-events-none">
+              <svg className="w-7 h-7 text-hot-pink animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+              </svg>
+              <span className="font-mono text-[7px] tracking-[0.25em] text-warm-white uppercase font-bold bg-[#0b3b35] border border-warm-white/15 rounded-lg px-3 py-1.5 shadow-lg">
+                Generating Pass...
+              </span>
+            </div>
+
+            {/* Skeletons for buttons */}
+            <div className="flex flex-col gap-2.5 w-full max-w-72.5 sm:max-w-82.5 font-mono mt-2 animate-pulse">
+              <div className="w-full h-11 bg-warm-white/5 border border-warm-white/10 rounded-xl" />
+              <div className="flex gap-2 w-full">
+                <div className="flex-1 h-11 bg-warm-white/5 border border-warm-white/10 rounded-xl" />
+                <div className="flex-1 h-11 bg-warm-white/5 border border-warm-white/10 rounded-xl" />
+                <div className="flex-1 h-11 bg-warm-white/5 border border-warm-white/10 rounded-xl" />
+              </div>
+            </div>
+
+            {/* Offscreen card rendering and Supabase upload trigger */}
+            <div style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
+              <BuilderPreview
+                photo={previewPhotoFile}
+                name={name}
+                role={role}
+                stack={stack}
+                builderId={cardUuid}
+                onBackToEdit={() => setIsGenerating(false)}
+                onRenderComplete={(id) => {
+                  router.push(
+                    `/preview?id=${id}&name=${encodeURIComponent(name)}&role=${encodeURIComponent(role)}&stack=${encodeURIComponent(stack)}`
+                  );
+                }}
+              />
+            </div>
+          </div>
+        ) : (
           <div className="w-full flex flex-col gap-6 items-center">
             
             {/* Header Content */}
@@ -162,7 +226,7 @@ export default function BuildPage() {
               </p>
             </div>
 
-             {/* Badges / Flow indicators */}
+            {/* Badges / Flow indicators */}
             <div className="flex gap-2 font-mono text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">
               <span className="bg-hot-pink/10 border border-hot-pink/20 text-hot-pink px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
                 <Camera className="w-3 h-3 text-hot-pink" />
@@ -181,6 +245,7 @@ export default function BuildPage() {
             {/* Form Card Container */}
             <form 
               onSubmit={handleBuildId} 
+              autoComplete="off"
               className="w-full backdrop-blur-md bg-teal-deep/30 border border-warm-white/10 rounded-2xl p-5 sm:p-6 shadow-2xl flex flex-col gap-4"
             >
               {/* Photo Upload Zone */}
@@ -198,77 +263,55 @@ export default function BuildPage() {
                 />
               </div>
 
-              {/* Name Input */}
+              {/* Text Input Block: Name */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="name" className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
-                  Full Name *
+                <label className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
+                  Full Name
                 </label>
                 <input
-                  id="name"
                   type="text"
+                  required
+                  autoComplete="off"
+                  placeholder="e.g. Khalid Shaikh"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Michael Scott"
-                  required
-                  spellCheck={false}
-                  className="w-full bg-[#062421] border border-warm-white/20 hover:border-warm-white/40 focus:border-hot-pink px-4 py-2.5 rounded-xl font-mono text-xs text-warm-white placeholder-warm-white/30 outline-none transition-all duration-150 shadow-inner"
+                  className="w-full bg-[#062421] border border-warm-white/10 rounded-xl px-4 py-3 text-xs font-mono text-warm-white placeholder-warm-white/30 focus:border-hot-pink transition-all duration-150"
                 />
               </div>
 
-              {/* Role Input */}
+              {/* Text Input Block: Role */}
               <div className="flex flex-col gap-1.5">
-                <div className="flex justify-between items-center">
-                  <label htmlFor="role" className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
-                    Role / What do you build? *
-                  </label>
-                  <span className="font-mono text-[7px] text-warm-white/40 uppercase tracking-widest">
-                    {role.length}/20 MAX
-                  </span>
-                </div>
+                <label className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
+                  Builder Role
+                </label>
                 <input
-                  id="role"
                   type="text"
+                  required
+                  autoComplete="off"
+                  placeholder="e.g. Full Stack Developer"
                   value={role}
-                  maxLength={20}
-                  onChange={(e) => setRole(e.target.value.slice(0, 20))}
-                  placeholder="e.g. Smart Contract Dev"
-                  required
-                  spellCheck={false}
-                  className="w-full bg-[#062421] border border-warm-white/20 hover:border-warm-white/40 focus:border-hot-pink px-4 py-2.5 rounded-xl font-mono text-xs text-warm-white placeholder-warm-white/30 outline-none transition-all duration-150 shadow-inner"
+                  onChange={(e) => setRole(e.target.value)}
+                  className="w-full bg-[#062421] border border-warm-white/10 rounded-xl px-4 py-3 text-xs font-mono text-warm-white placeholder-warm-white/30 focus:border-hot-pink transition-all duration-150"
                 />
               </div>
 
-              {/* Stack Input */}
+              {/* Text Input Block: Tech Stack */}
               <div className="flex flex-col gap-1.5">
-                <div className="flex justify-between items-center">
-                  <label htmlFor="stack" className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
-                    Stack / Tech Stack *
-                  </label>
-                  <span className="font-mono text-[7px] text-warm-white/40 uppercase tracking-widest">
-                    MAX 3 TAGS
-                  </span>
-                </div>
+                <label className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
+                  Tech Stack (Comma-separated, max 3)
+                </label>
                 <input
-                  id="stack"
                   type="text"
-                  value={stack}
                   required
-                  spellCheck={false}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    const parts = val.split(",");
-                    if (parts.length > 3) {
-                      setStack(parts.slice(0, 3).join(","));
-                    } else {
-                      setStack(val);
-                    }
-                  }}
-                  placeholder="e.g. Solidity, Hardhat, Go"
-                  className="w-full bg-[#062421] border border-warm-white/20 hover:border-warm-white/40 focus:border-hot-pink px-4 py-2.5 rounded-xl font-mono text-xs text-warm-white placeholder-warm-white/30 outline-none transition-all duration-150 shadow-inner"
+                  autoComplete="off"
+                  placeholder="e.g. React.js, Next.js, Express.js"
+                  value={stack}
+                  onChange={(e) => setStack(e.target.value)}
+                  className="w-full bg-[#062421] border border-warm-white/10 rounded-xl px-4 py-3 text-xs font-mono text-warm-white placeholder-warm-white/30 focus:border-hot-pink transition-all duration-150"
                 />
               </div>
 
-              {/* Submit Action Button */}
+              {/* Primary submit action */}
               <button
                 type="submit"
                 disabled={isSubmitDisabled}
@@ -282,28 +325,6 @@ export default function BuildPage() {
                 <span>→</span>
               </button>
             </form>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-2 w-full max-w-xl mx-auto items-center">
-            {/* Editorial Heading for Preview */}
-            <div className="text-center space-y-2 max-w-md">
-              <h1 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-tight leading-none text-bright-yellow">
-                YOUR BUILDER ID
-              </h1>
-              <p className="font-mono text-[10px] text-bright-yellow/85 tracking-wider">
-                Preview your HH Goa 2026 developer profile card
-              </p>
-            </div>
-
-            {/* Preview Component */}
-            <BuilderPreview
-              photo={previewPhotoFile}
-              name={name}
-              role={role}
-              stack={stack}
-              builderId={cardUuid}
-              onBackToEdit={() => setStep("form")}
-            />
           </div>
         )}
       </main>
@@ -334,34 +355,19 @@ export default function BuildPage() {
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
-                showGrid={false}
-                style={{
-                  cropAreaStyle: {
-                    border: "2px solid var(--warm-white)",
-                    borderRadius: "4px",
-                    boxShadow: "0 0 0 9999px rgba(11, 59, 53, 0.6)", // Faded teal overlay instead of dark black side bands
-                  },
-                  containerStyle: {
-                    background: "rgba(0, 0, 0, 0.4)",
-                  }
-                }}
               />
-              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/75 border border-warm-white/10 rounded px-2 py-0.5 font-mono text-[6px] font-bold tracking-widest text-warm-white pointer-events-none uppercase z-10">
-                DRAG IMAGE TO ALIGN
-              </div>
             </div>
 
-            {/* Zoom Controls */}
-            <div className="flex flex-col gap-1 px-1">
-              <div className="flex justify-between items-center font-mono text-[8px] uppercase tracking-wider text-warm-white/50 font-bold">
-                <span>Zoom</span>
-                <span>{Math.round(zoom * 100)}%</span>
-              </div>
+            {/* Slider Controls */}
+            <div className="flex flex-col gap-1.5">
+              <label className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
+                Zoom Scale
+              </label>
               <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => setZoom(Math.max(1, zoom - 0.2))}
-                  className="w-7 h-7 rounded bg-teal-deep border border-warm-white/20 flex items-center justify-center font-mono text-xs font-bold text-warm-white hover:border-hot-pink transition-colors active:scale-95"
+                  onClick={() => setZoom(Math.max(1, zoom - 0.1))}
+                  className="w-7 h-7 rounded border border-warm-white/20 text-warm-white hover:border-hot-pink hover:text-hot-pink transition-colors font-mono font-bold text-xs"
                 >
                   -
                 </button>
@@ -369,15 +375,15 @@ export default function BuildPage() {
                   type="range"
                   min={1}
                   max={3}
-                  step={0.05}
+                  step={0.1}
                   value={zoom}
-                  onChange={(e) => setZoom(parseFloat(e.target.value))}
-                  className="flex-1 accent-hot-pink h-0.5 bg-warm-white/10 rounded-lg appearance-none cursor-pointer"
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className="flex-1 h-1 bg-warm-white/20 rounded-lg appearance-none cursor-pointer accent-hot-pink"
                 />
                 <button
                   type="button"
-                  onClick={() => setZoom(Math.min(3, zoom + 0.2))}
-                  className="w-7 h-7 rounded bg-teal-deep border border-warm-white/20 flex items-center justify-center font-mono text-xs font-bold text-warm-white hover:border-hot-pink transition-colors active:scale-95"
+                  onClick={() => setZoom(Math.min(3, zoom + 0.1))}
+                  className="w-7 h-7 rounded border border-warm-white/20 text-warm-white hover:border-hot-pink hover:text-hot-pink transition-colors font-mono font-bold text-xs"
                 >
                   +
                 </button>
@@ -416,5 +422,17 @@ export default function BuildPage() {
       {/* Shared Website Footer */}
       <Footer />
     </div>
+  );
+}
+
+export default function BuildPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col min-h-screen bg-teal-deep text-warm-white font-mono items-center justify-center gap-4">
+        <div className="animate-spin text-hot-pink text-2xl font-bold">LOADING...</div>
+      </div>
+    }>
+      <BuildPageContent />
+    </Suspense>
   );
 }
