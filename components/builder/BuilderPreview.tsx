@@ -4,6 +4,7 @@ import React, { useRef, useState } from "react";
 import BuilderCard from "../card/BuilderCard";
 import Button from "../shared/Button";
 import { toPng } from "html-to-image";
+import { classifyBuilder } from "../../lib/image/classifyBuilder";
 
 interface BuilderPreviewProps {
   photo: File | null;
@@ -131,6 +132,7 @@ export default function BuilderPreview({
   };
 
   const isBusy = isDownloading || isSharing;
+  const builderClass = classifyBuilder(role, stack);
 
   return (
     <div className="w-full flex flex-col items-center gap-3">
@@ -141,7 +143,7 @@ export default function BuilderPreview({
           name={name}
           role={role}
           stack={stack}
-          builderTitle="TERMINAL WIZARD"
+          builderTitle={builderClass}
         />
       </div>
 

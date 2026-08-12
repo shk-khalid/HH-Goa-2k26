@@ -9,7 +9,8 @@ export async function convertHeic(file: File): Promise<File> {
   }
 
   try {
-    const convertedBlob = await heicTo({
+    const convert = (heicTo as any).default || heicTo;
+    const convertedBlob = await convert({
       blob: file,
       type: "image/jpeg",
       quality: 0.92,

@@ -8,6 +8,7 @@ import BuilderPreview from "@/components/builder/BuilderPreview";
 import Footer from "@/components/shared/Footer";
 import Cropper from "react-easy-crop";
 import { cropImage, Area } from "@/lib/image/cropImage";
+import { Camera, Zap, Share2 } from "lucide-react";
 
 type AppStep = "form" | "preview";
 
@@ -139,24 +140,27 @@ export default function BuildPage() {
             
             {/* Header Content */}
             <div className="text-center space-y-2 max-w-md">
-              <h1 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-tight leading-none text-warm-white">
+              <h1 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-tight leading-none text-bright-yellow">
                 Hacker Goa House Builder Pass
               </h1>
-              <p className="font-mono text-[10px] text-warm-white/60 tracking-wider">
+              <p className="font-mono text-[10px] text-bright-yellow/85 tracking-wider">
                 Personalize & generate your official builder pass for Hacker House Goa 2026
               </p>
             </div>
 
-            {/* Badges / Flow indicators */}
-            <div className="flex gap-2 font-mono text-[8px] sm:text-[9px] font-bold uppercase tracking-wider text-warm-white/80">
-              <span className="bg-teal-deep/50 border border-warm-white/10 px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
-                📷 Upload Photo
+             {/* Badges / Flow indicators */}
+            <div className="flex gap-2 font-mono text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">
+              <span className="bg-hot-pink/10 border border-hot-pink/20 text-hot-pink px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+                <Camera className="w-3 h-3 text-hot-pink" />
+                PHOTO SNAP
               </span>
-              <span className="bg-teal-deep/50 border border-warm-white/10 px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
-                ⚡ Auto Builder
+              <span className="bg-hot-pink/10 border border-hot-pink/20 text-hot-pink px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+                <Zap className="w-3 h-3 text-hot-pink" />
+                GENERATE PASS
               </span>
-              <span className="bg-teal-deep/50 border border-warm-white/10 px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
-                🚀 Share Pass
+              <span className="bg-hot-pink/10 border border-hot-pink/20 text-hot-pink px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+                <Share2 className="w-3 h-3 text-hot-pink" />
+                BROADCAST
               </span>
             </div>
 
@@ -190,7 +194,7 @@ export default function BuildPage() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Satoshi Nakamoto"
+                  placeholder="e.g. Michael Scott"
                   required
                   className="w-full bg-[#062421] border border-warm-white/20 hover:border-warm-white/40 focus:border-hot-pink px-4 py-2.5 rounded-xl font-mono text-xs text-warm-white placeholder-warm-white/30 outline-none transition-all duration-150 shadow-inner"
                 />
@@ -212,7 +216,7 @@ export default function BuildPage() {
                   value={role}
                   maxLength={20}
                   onChange={(e) => setRole(e.target.value.slice(0, 20))}
-                  placeholder="e.g. Full-Stack / Rust"
+                  placeholder="e.g. Smart Contract Dev"
                   required
                   className="w-full bg-[#062421] border border-warm-white/20 hover:border-warm-white/40 focus:border-hot-pink px-4 py-2.5 rounded-xl font-mono text-xs text-warm-white placeholder-warm-white/30 outline-none transition-all duration-150 shadow-inner"
                 />
@@ -242,7 +246,7 @@ export default function BuildPage() {
                       setStack(val);
                     }
                   }}
-                  placeholder="e.g. React, Node.js, WebGL (Max 3 tags)"
+                  placeholder="e.g. Solidity, Hardhat, Go"
                   className="w-full bg-[#062421] border border-warm-white/20 hover:border-warm-white/40 focus:border-hot-pink px-4 py-2.5 rounded-xl font-mono text-xs text-warm-white placeholder-warm-white/30 outline-none transition-all duration-150 shadow-inner"
                 />
               </div>
