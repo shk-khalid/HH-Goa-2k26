@@ -229,7 +229,7 @@ export default function BuilderCard({
         {/* Telemetry Box Right */}
         <div className="text-right flex flex-col items-end">
           <div className="flex items-center gap-1 text-[8px] font-mono text-[#d7e65a] font-bold tracking-widest">
-            <span>#FRAMEINGOA</span>
+            <span>#FrameInGoa</span>
             <span className="text-xs text-coral-accent">⊕</span>
           </div>
           <span className="text-[5.5px] text-[#f4e9c8]/60 tracking-widest uppercase block mt-0.5">

@@ -88,8 +88,9 @@ export default function BuilderPreview({
       `💻 Stack: ${stack}\n` +
       `✨ Class: ${builderClass}\n\n` +
       `Built, shipped, and ready to make waves in Goa! 🌊🌴\n` +
-      `#HHGoa2026 #FRAMEINGOA\n\n` +
-      `Try it out: https://goaframes.vercel.app/`
+      `#HHGoa2026 #FrameInGoa\n\n` +
+      `Try it out: https://goaframes.vercel.app/\n` +
+      `Built by Team Antimatter`
     );
     window.open(
       `https://twitter.com/intent/tweet?text=${tweetText}`,
