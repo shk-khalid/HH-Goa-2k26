@@ -9,6 +9,7 @@ interface BuilderCardProps {
   stack: string;
   builderTitle?: string;
   builderId?: string;
+  onCardGenerated?: (dataUrl: string) => void;
 }
 
 export default function BuilderCard({
@@ -18,10 +19,43 @@ export default function BuilderCard({
   stack,
   builderTitle = "TERMINAL WIZARD",
   builderId: customBuilderId,
+  onCardGenerated,
 }: BuilderCardProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>("");
   const [sunriseBgDataUrl, setSunriseBgDataUrl] = useState<string>("/images/sunrise_bg.png");
+
+  // Auto-capture HTML card rendering to PNG once all base64 assets have loaded
+  useEffect(() => {
+    if (imageUrl && qrCodeDataUrl && sunriseBgDataUrl.startsWith("data:image")) {
+      const timer = setTimeout(() => {
+        // Query selector matches specifically by class inside the ref container
+        const cardElement = document.querySelector(".id-card");
+        if (cardElement) {
+          import("html-to-image").then(({ toPng }) => {
+            toPng(cardElement as HTMLElement, {
+              cacheBust: false,
+              pixelRatio: 2,
+              style: {
+                transform: "scale(1)",
+                borderRadius: "18px",
+              },
+              imagePlaceholder: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIHWNgAAIABQABNjN9GQAAAABJRnQ5ErkJggg==",
+            })
+              .then((dataUrl) => {
+                if (onCardGenerated) {
+                  onCardGenerated(dataUrl);
+                }
+              })
+              .catch((err) => {
+                console.error("Html-to-image capture inside card failed:", err);
+              });
+          });
+        }
+      }, 500); // 500ms safety delay for styles/fonts paint
+      return () => clearTimeout(timer);
+    }
+  }, [imageUrl, qrCodeDataUrl, sunriseBgDataUrl, onCardGenerated]);
 
   // Preload sunrise background as data URL so html-to-image can inline it
   useEffect(() => {
@@ -98,10 +132,15 @@ export default function BuilderCard({
   const generatedId = `HHGOA-${(nameHash % 90000 + 10000).toString(16).toUpperCase()}`;
   const builderId = customBuilderId || generatedId;
 
-  // QR Code URL pointing to profile
+  // Format short serial label for barcode footer to avoid layout overflow on UUIDs
+  const serialLabel = customBuilderId && customBuilderId.includes("-") && customBuilderId.length > 15
+    ? `HHGOA-${customBuilderId.split("-").pop()?.toUpperCase() || "2A95"}`
+    : builderId;
+
+  // QR Code URL pointing to profile using the unique UUID
   const shareData = typeof window !== "undefined"
-    ? `${window.location.origin}/card/${builderId}`
-    : `https://goaframe.com/card/${builderId}`;
+    ? `${window.location.origin}/card/${customBuilderId || generatedId}`
+    : `https://goaframes.vercel.app/card/${customBuilderId || generatedId}`;
   
   useEffect(() => {
     import("qrcode").then((QRCode) => {
@@ -243,7 +282,7 @@ export default function BuilderCard({
 
           {/* Left Vertical Serial Label */}
           <div className="absolute -left-3.5 top-1/2 -translate-y-1/2 -rotate-90 text-[5px] font-mono tracking-widest text-[#d7e65a]/50 whitespace-nowrap">
-            ID: {builderId}
+            ID: {serialLabel}
           </div>
         </div>
 
@@ -313,7 +352,7 @@ export default function BuilderCard({
       </div>
 
       {/* Footer Bar Section */}
-      <div className="flex justify-between items-center pt-1 border-t border-[#d7e65a]/20 z-10">
+      <div className="flex justify-between items-end pt-1 border-t border-[#d7e65a]/20 z-10">
         
         {/* Left: Dynamic QR Code Box */}
         <div className="w-10 h-10 bg-[#f4e9c8] p-0.5 rounded flex items-center justify-center shrink-0 shadow">
@@ -334,7 +373,7 @@ export default function BuilderCard({
             {renderBarcodeBars()}
           </div>
           <span className="text-[6.5px] font-mono text-[#d7e65a] font-bold tracking-widest">
-            {builderId}
+            {serialLabel}
           </span>
         </div>
 

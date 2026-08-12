@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.112.3",
     "face-api.js": "^0.22.2",
     "heic-to": "^1.5.2",
     "html-to-image": "^1.11.13",

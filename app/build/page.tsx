@@ -21,6 +21,18 @@ export default function BuildPage() {
   const [role, setRole] = useState<string>("");
   const [stack, setStack] = useState<string>("");
   const [step, setStep] = useState<AppStep>("form");
+  const [cardUuid, setCardUuid] = useState<string>("");
+
+  useEffect(() => {
+    const uuid = typeof crypto !== "undefined" && crypto.randomUUID 
+      ? crypto.randomUUID() 
+      : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+          const r = Math.random() * 16 | 0;
+          const v = c === "x" ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        });
+    setCardUuid(uuid);
+  }, []);
 
   // Modal crop states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -196,6 +208,7 @@ export default function BuildPage() {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Michael Scott"
                   required
+                  spellCheck={false}
                   className="w-full bg-[#062421] border border-warm-white/20 hover:border-warm-white/40 focus:border-hot-pink px-4 py-2.5 rounded-xl font-mono text-xs text-warm-white placeholder-warm-white/30 outline-none transition-all duration-150 shadow-inner"
                 />
               </div>
@@ -218,6 +231,7 @@ export default function BuildPage() {
                   onChange={(e) => setRole(e.target.value.slice(0, 20))}
                   placeholder="e.g. Smart Contract Dev"
                   required
+                  spellCheck={false}
                   className="w-full bg-[#062421] border border-warm-white/20 hover:border-warm-white/40 focus:border-hot-pink px-4 py-2.5 rounded-xl font-mono text-xs text-warm-white placeholder-warm-white/30 outline-none transition-all duration-150 shadow-inner"
                 />
               </div>
@@ -237,6 +251,7 @@ export default function BuildPage() {
                   type="text"
                   value={stack}
                   required
+                  spellCheck={false}
                   onChange={(e) => {
                     const val = e.target.value;
                     const parts = val.split(",");
@@ -284,6 +299,7 @@ export default function BuildPage() {
               name={name}
               role={role}
               stack={stack}
+              builderId={cardUuid}
               onBackToEdit={() => setStep("form")}
             />
           </div>

@@ -8,6 +8,7 @@
   --warm-white: #FFFBE8;
   --pure-white: #FFFFFF;
   --black: #000000;
+  color-scheme: dark;
 }
 
 @theme {
@@ -48,14 +49,19 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
+/* Force input text color to remain warm white */
+input {
+  color: #FFFBE8 !important;
+}
+
 /* Custom override for browser input autofill styling */
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus, 
 input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 1000px #062421 inset !important; /* matches solid input background hex */
-  -webkit-text-fill-color: var(--warm-white) !important;
-  caret-color: var(--warm-white);
+  -webkit-text-fill-color: #FFFBE8 !important;
+  caret-color: #FFFBE8;
   font-family: var(--font-mono) !important;
   transition: background-color 5000s ease-in-out 0s;
 }
