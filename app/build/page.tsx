@@ -176,13 +176,13 @@ export default function BuildPage() {
 
           </div>
         ) : (
-          <div className="flex flex-col gap-6 w-full max-w-xl mx-auto">
+          <div className="flex flex-col gap-2 w-full max-w-xl mx-auto items-center">
             {/* Editorial Heading for Preview */}
-            <div className="space-y-2 text-center">
-              <h1 className="text-3xl font-extrabold uppercase tracking-tight text-warm-white leading-none">
+            <div className="space-y-1 text-center">
+              <h1 className="text-xl sm:text-2xl font-extrabold uppercase tracking-tight text-warm-white leading-none">
                 YOUR BUILDER ID
               </h1>
-              <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-warm-white/60 font-bold">
+              <p className="font-mono text-[8px] uppercase tracking-[0.25em] text-warm-white/60 font-bold">
                 Preview your HH Goa 2026 developer profile card
               </p>
             </div>

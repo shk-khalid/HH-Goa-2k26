@@ -21,6 +21,28 @@ export default function BuilderCard({
 }: BuilderCardProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>("");
+  const [sunriseBgDataUrl, setSunriseBgDataUrl] = useState<string>("/images/sunrise_bg.png");
+
+  // Preload sunrise background as data URL so html-to-image can inline it
+  useEffect(() => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0);
+          setSunriseBgDataUrl(canvas.toDataURL("image/png"));
+        }
+      } catch {
+        // Fallback: keep using the original URL
+      }
+    };
+    img.src = "/images/sunrise_bg.png";
+  }, []);
 
   useEffect(() => {
     if (!photo) {
@@ -29,12 +51,31 @@ export default function BuilderCard({
       return;
     }
 
-    const url = URL.createObjectURL(photo);
-    setImageUrl(url);
-
-    return () => {
-      URL.revokeObjectURL(url);
+    // Resize photo via canvas to keep data URL small for html-to-image export
+    const blobUrl = URL.createObjectURL(photo);
+    const img = new Image();
+    img.onload = () => {
+      const MAX_DIM = 800;
+      let { naturalWidth: w, naturalHeight: h } = img;
+      if (w > MAX_DIM || h > MAX_DIM) {
+        const scale = MAX_DIM / Math.max(w, h);
+        w = Math.round(w * scale);
+        h = Math.round(h * scale);
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.drawImage(img, 0, 0, w, h);
+        setImageUrl(canvas.toDataURL("image/jpeg", 0.85));
+      }
+      URL.revokeObjectURL(blobUrl);
     };
+    img.onerror = () => {
+      URL.revokeObjectURL(blobUrl);
+    };
+    img.src = blobUrl;
   }, [photo]);
 
   // Trim and limit characters for clean layout alignment
@@ -180,16 +221,16 @@ export default function BuilderCard({
         <div className="col-span-5 relative flex flex-col items-center">
           <div className="w-full aspect-4/5 bg-[#f4e9c8] p-1.5 rounded shadow-lg flex flex-col justify-between">
             {/* Inner Photo Window */}
-            <div className="w-full flex-1 bg-[#0b6839] overflow-hidden rounded-xs relative flex items-center justify-center">
+            <div className="w-full flex-1 bg-[#0b6839] overflow-hidden rounded-xs relative">
               {imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={imageUrl}
                   alt={nameVal}
-                  className="w-full h-full object-cover grayscale contrast-[1.05]"
+                  className="absolute inset-0 w-full h-full object-cover grayscale contrast-[1.05]"
                 />
               ) : (
-                <div className="flex flex-col items-center gap-1">
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
                   <span className="text-[5px] text-[#f4e9c8]/60 tracking-widest uppercase">PHOTO</span>
                   <span className="text-xs text-[#f4e9c8]/40">+</span>
                 </div>
@@ -265,7 +306,7 @@ export default function BuilderCard({
       <div className="absolute bottom-0 left-0 w-full pointer-events-none select-none z-1" style={{ height: '50%' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img 
-          src="/images/sunrise_bg.png" 
+          src={sunriseBgDataUrl} 
           alt="Sunrise Beach Background" 
           className="absolute bottom-13 left-0 w-full h-auto"
         />
