@@ -164,7 +164,7 @@ export default function UploadZone({
             <div 
               onClick={onCropRequest}
               title="Click to adjust / crop photo"
-              className="relative w-12 aspect-[4/5] rounded-lg bg-teal-deep/40 border border-warm-white/10 overflow-hidden shrink-0 flex items-center justify-center cursor-pointer hover:border-hot-pink transition-all duration-150 group"
+              className="relative w-12 aspect-4/5 rounded-lg bg-teal-deep/40 border border-warm-white/10 overflow-hidden shrink-0 flex items-center justify-center cursor-pointer hover:border-hot-pink transition-all duration-150 group"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img

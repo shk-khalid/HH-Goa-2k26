@@ -70,13 +70,13 @@ export default function SplashScreen() {
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] bg-[#031412] flex flex-col items-center justify-center gap-6 transition-all duration-700 ease-out select-none ${
+      className={`fixed inset-0 z-9999 bg-[#031412] flex flex-col items-center justify-center gap-6 transition-all duration-700 ease-out select-none ${
         visible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       }`}
     >
       {/* Background ambient lighting */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,162,154,0.12),transparent_70%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_49%,rgba(255,0,128,0.06)_50%,rgba(255,0,128,0.06)_51%,transparent_52%)] bg-[size:100%_80px] animate-[pulse_2s_infinite] pointer-events-none opacity-20" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_49%,rgba(255,0,128,0.06)_50%,rgba(255,0,128,0.06)_51%,transparent_52%)] bg-size-[100%_80px] animate-[pulse_2s_infinite] pointer-events-none opacity-20" />
 
       {/* Main Logo branding wrapper */}
       <div className="flex flex-col items-center gap-3">
@@ -92,7 +92,7 @@ export default function SplashScreen() {
       {/* Loading & Status Text wrapper */}
       <div className="flex flex-col items-center gap-4 mt-4 w-full">
         {/* Wider, thinner loading bar indicator */}
-        <div className="w-56 h-[2px] bg-warm-white/10 rounded-full overflow-hidden relative shadow-inner">
+        <div className="w-56 h-0.5 bg-warm-white/10 rounded-full overflow-hidden relative shadow-inner">
           <div 
             className="h-full bg-hot-pink w-0 absolute left-0 top-0 animate-[loadingBar_1.8s_ease-out_forwards] shadow-[0_0_8px_#ff0080]" 
           />
