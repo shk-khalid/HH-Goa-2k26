@@ -146,7 +146,9 @@ export default function BuildPage() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-lg w-full mx-auto px-6 py-6 md:py-10 z-30 flex flex-col justify-center items-center">
+      <main className={`flex-1 max-w-lg w-full mx-auto px-6 z-30 flex flex-col justify-center items-center transition-all duration-300 ${
+        step === "preview" ? "py-3 md:py-4 gap-3" : "py-6 md:py-10 gap-6"
+      }`}>
         {step === "form" ? (
           <div className="w-full flex flex-col gap-6 items-center">
             

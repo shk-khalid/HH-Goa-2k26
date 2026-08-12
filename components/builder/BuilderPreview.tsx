@@ -88,7 +88,8 @@ export default function BuilderPreview({
       `💻 Stack: ${stack}\n` +
       `✨ Class: ${builderClass}\n\n` +
       `Built, shipped, and ready to make waves in Goa! 🌊🌴\n` +
-      `#HHGoa2026 #FRAMEINGOA`
+      `#HHGoa2026 #FRAMEINGOA\n\n` +
+      `Try it out: https://goaframes.vercel.app/`
     );
     window.open(
       `https://twitter.com/intent/tweet?text=${tweetText}`,
@@ -98,9 +99,7 @@ export default function BuilderPreview({
   };
 
   const handleShareX = () => {
-    // 1. Download the card image automatically
-    handleDownload();
-    // 2. Open the helper modal informing them how to attach it
+    // Open the helper modal informing them how to download and attach it
     setIsShareModalOpen(true);
   };
 
@@ -145,7 +144,7 @@ export default function BuilderPreview({
       {/* Visible static image preview */}
       <div className="w-full flex justify-center items-center">
         {isRendering ? (
-          <div className="w-full max-w-sm aspect-[3/4] bg-[#062421]/60 border border-warm-white/10 rounded-2xl flex flex-col items-center justify-center gap-3 animate-pulse shadow-2xl relative overflow-hidden pointer-events-none">
+          <div className="w-full max-w-[290px] sm:max-w-[330px] aspect-[3/4] bg-[#062421]/60 border border-warm-white/10 rounded-2xl flex flex-col items-center justify-center gap-3 animate-pulse shadow-2xl relative overflow-hidden pointer-events-none">
             <Loader2 className="w-7 h-7 text-hot-pink animate-spin" />
             <span className="font-mono text-[7px] tracking-[0.25em] text-warm-white uppercase font-bold bg-[#0b3b35] border border-warm-white/15 rounded-lg px-3 py-1.5 shadow-lg">
               Generating Pass...
@@ -155,7 +154,7 @@ export default function BuilderPreview({
           <img
             src={renderedImageUrl}
             alt="HH Goa Builder Pass"
-            className="w-full max-w-sm aspect-[3/4] object-contain shadow-2xl rounded-2xl animate-in fade-in duration-300 border border-warm-white/10"
+            className="w-full max-w-[290px] sm:max-w-[330px] aspect-[3/4] object-contain shadow-2xl rounded-2xl animate-in fade-in duration-300 border border-warm-white/10"
           />
         ) : (
           <div className="text-red-400 font-mono text-xs uppercase font-bold">
@@ -166,7 +165,7 @@ export default function BuilderPreview({
 
       {/* Actions row */}
       {isRendering ? (
-        <div className="flex flex-col gap-2.5 w-full max-w-sm font-mono mt-2 animate-pulse">
+        <div className="flex flex-col gap-2.5 w-full max-w-[290px] sm:max-w-[330px] font-mono mt-2 animate-pulse">
           {/* Skeleton for primary button */}
           <div className="w-full h-11 bg-warm-white/5 border border-warm-white/10 rounded-xl" />
           {/* Skeletons for secondary buttons */}
@@ -177,7 +176,7 @@ export default function BuilderPreview({
           </div>
         </div>
       ) : renderedImageUrl ? (
-        <div className="flex flex-col gap-2.5 w-full max-w-sm font-mono mt-2">
+        <div className="flex flex-col gap-2.5 w-full max-w-[290px] sm:max-w-[330px] font-mono mt-2">
           {/* Primary Action Button: Share to X */}
           <button
             onClick={handleShareX}
@@ -245,7 +244,7 @@ export default function BuilderPreview({
                 <Paperclip className="w-5 h-5 text-hot-pink" />
               </div>
               <p className="text-[10px] leading-relaxed text-warm-white/80 font-mono">
-                Your high-resolution Builder Card has been downloaded. Attach the downloaded image to your X post before hitting Publish!
+                Please make sure to download your pass and attach it manually to your X post before hitting Publish!
               </p>
             </div>
 
