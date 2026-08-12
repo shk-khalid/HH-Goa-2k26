@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Imbue, Victor_Mono } from "next/font/google";
 import "./globals.css";
 import SmoothScroller from "@/components/shared/SmoothScroller";
+import SplashScreen from "@/components/shared/SplashScreen";
 
 const imbue = Imbue({
   variable: "--font-imbue",
@@ -32,6 +33,7 @@ export default function RootLayout({
     <html lang="en" className={`${imbue.variable} ${victorMono.variable}`}>
       <body className="bg-teal-deep text-warm-white font-sans antialiased overflow-x-hidden">
         <SmoothScroller />
+        <SplashScreen />
         {children}
       </body>
     </html>

@@ -145,7 +145,7 @@ export default function BuilderPreview({
       {/* Visible static image preview */}
       <div className="w-full flex justify-center items-center">
         {isRendering ? (
-          <div className="w-full max-w-[290px] sm:max-w-[330px] aspect-[3/4] bg-[#062421]/60 border border-warm-white/10 rounded-2xl flex flex-col items-center justify-center gap-3 animate-pulse shadow-2xl relative overflow-hidden pointer-events-none">
+          <div className="w-full max-w-72.5 sm:max-w-82.5 aspect-3/4 bg-[#062421]/60 border border-warm-white/10 rounded-2xl flex flex-col items-center justify-center gap-3 animate-pulse shadow-2xl relative overflow-hidden pointer-events-none">
             <Loader2 className="w-7 h-7 text-hot-pink animate-spin" />
             <span className="font-mono text-[7px] tracking-[0.25em] text-warm-white uppercase font-bold bg-[#0b3b35] border border-warm-white/15 rounded-lg px-3 py-1.5 shadow-lg">
               Generating Pass...
@@ -155,7 +155,7 @@ export default function BuilderPreview({
           <img
             src={renderedImageUrl}
             alt="HH Goa Builder Pass"
-            className="w-full max-w-[290px] sm:max-w-[330px] aspect-[3/4] object-contain shadow-2xl rounded-2xl animate-in fade-in duration-300 border border-warm-white/10"
+            className="w-full max-w-72.5 sm:max-w-82.5 aspect-3/4 object-contain shadow-2xl rounded-2xl animate-in fade-in duration-300 border border-warm-white/10"
           />
         ) : (
           <div className="text-red-400 font-mono text-xs uppercase font-bold">
@@ -166,7 +166,7 @@ export default function BuilderPreview({
 
       {/* Actions row */}
       {isRendering ? (
-        <div className="flex flex-col gap-2.5 w-full max-w-[290px] sm:max-w-[330px] font-mono mt-2 animate-pulse">
+        <div className="flex flex-col gap-2.5 w-full max-w-72.5 sm:max-w-82.5 font-mono mt-2 animate-pulse">
           {/* Skeleton for primary button */}
           <div className="w-full h-11 bg-warm-white/5 border border-warm-white/10 rounded-xl" />
           {/* Skeletons for secondary buttons */}
@@ -177,7 +177,7 @@ export default function BuilderPreview({
           </div>
         </div>
       ) : renderedImageUrl ? (
-        <div className="flex flex-col gap-2.5 w-full max-w-[290px] sm:max-w-[330px] font-mono mt-2">
+        <div className="flex flex-col gap-2.5 w-full max-w-72.5 sm:max-w-82.5 font-mono mt-2">
           {/* Primary Action Button: Share to X */}
           <button
             onClick={handleShareX}
