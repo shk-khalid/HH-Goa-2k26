@@ -21,7 +21,8 @@ export default function BuilderPreview({
   onBackToEdit,
 }: BuilderPreviewProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [isExporting, setIsExporting] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
 
   // Shared options for html-to-image export
   const exportOptions = {
@@ -37,7 +38,7 @@ export default function BuilderPreview({
 
   const handleDownload = () => {
     if (!cardRef.current) return;
-    setIsExporting(true);
+    setIsDownloading(true);
 
     setTimeout(() => {
       if (!cardRef.current) return;
@@ -48,18 +49,18 @@ export default function BuilderPreview({
           link.download = filename;
           link.href = dataUrl;
           link.click();
-          setIsExporting(false);
+          setIsDownloading(false);
         })
         .catch((err) => {
           console.error("Oops, card generation failed!", err);
-          setIsExporting(false);
+          setIsDownloading(false);
         });
     }, 150);
   };
 
   const handleShareX = () => {
     if (!cardRef.current) return;
-    setIsExporting(true);
+    setIsSharing(true);
 
     setTimeout(() => {
       if (!cardRef.current) return;
@@ -100,34 +101,36 @@ export default function BuilderPreview({
 
                 if (navigator.canShare(shareData)) {
                   navigator.share(shareData)
-                    .then(() => setIsExporting(false))
+                    .then(() => setIsSharing(false))
                     .catch(err => {
                       // If user cancels or share fails, fallback
                       console.log("Share failed or cancelled, falling back", err);
                       triggerFallback();
-                      setIsExporting(false);
+                      setIsSharing(false);
                     });
                 } else {
                   triggerFallback();
-                  setIsExporting(false);
+                  setIsSharing(false);
                 }
               })
               .catch(err => {
                 console.error("Blob conversion failed", err);
                 triggerFallback();
-                setIsExporting(false);
+                setIsSharing(false);
               });
           } else {
             triggerFallback();
-            setIsExporting(false);
+            setIsSharing(false);
           }
         })
         .catch((err) => {
           console.error("Oops, card generation failed!", err);
-          setIsExporting(false);
+          setIsSharing(false);
         });
     }, 150);
   };
+
+  const isBusy = isDownloading || isSharing;
 
   return (
     <div className="w-full flex flex-col items-center gap-3">
@@ -146,24 +149,30 @@ export default function BuilderPreview({
       <div className="flex gap-2 w-full max-w-90">
         <button
           onClick={handleDownload}
-          disabled={isExporting}
+          disabled={isBusy}
           className="flex-1 py-2.5 px-3 font-mono text-[9px] font-bold uppercase tracking-widest rounded-lg bg-hot-pink text-black border border-hot-pink hover:bg-bright-yellow hover:border-bright-yellow transition-all duration-150 active:scale-[0.97] disabled:bg-zinc-800 disabled:text-zinc-500 disabled:border-zinc-800 disabled:cursor-not-allowed"
         >
-          {isExporting ? "Generating..." : "Download"}
+          {isDownloading ? "Downloading..." : "Download"}
         </button>
         <button
           onClick={handleShareX}
-          disabled={isExporting}
+          disabled={isBusy}
           className="flex-1 py-2.5 px-3 font-mono text-[9px] font-bold uppercase tracking-widest rounded-lg bg-transparent text-warm-white border border-warm-white/30 hover:border-hot-pink hover:text-hot-pink transition-all duration-150 active:scale-[0.97] flex items-center justify-center gap-1.5 disabled:text-zinc-700 disabled:border-zinc-800 disabled:cursor-not-allowed"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-          </svg>
-          Share
+          {isSharing ? (
+            "Sharing..."
+          ) : (
+            <>
+              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+              Share
+            </>
+          )}
         </button>
         <button
           onClick={onBackToEdit}
-          disabled={isExporting}
+          disabled={isBusy}
           className="flex-1 py-2.5 px-3 font-mono text-[9px] font-bold uppercase tracking-widest rounded-lg bg-transparent text-warm-white border border-warm-white/30 hover:border-hot-pink hover:text-hot-pink transition-all duration-150 active:scale-[0.97] disabled:text-zinc-700 disabled:border-zinc-800 disabled:cursor-not-allowed"
         >
           Edit

@@ -1,23 +1,33 @@
-"use client";
-
 import React, { useRef, useState, useEffect } from "react";
+import { validateImage } from "../../lib/image/validateImage";
+import { convertHeic } from "../../lib/image/convertHeic";
 
 interface UploadZoneProps {
   photo: File | null;
   onPhotoChange: (file: File | null) => void;
+  croppedPreviewUrl: string | null;
+  onCroppedImageChange: (url: string | null) => void;
+  onCropRequest: () => void;
   compact?: boolean;
 }
 
-export default function UploadZone({ photo, onPhotoChange, compact = false }: UploadZoneProps) {
+export default function UploadZone({
+  photo,
+  onPhotoChange,
+  croppedPreviewUrl,
+  onCroppedImageChange,
+  onCropRequest,
+  compact = false,
+}: UploadZoneProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isDragActive, setIsDragActive] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  // Manage object URL lifecycle
+  // Manage object URL lifecycle for fallback original preview
   useEffect(() => {
     if (!photo) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPreviewUrl(null);
       return;
     }
@@ -30,28 +40,27 @@ export default function UploadZone({ photo, onPhotoChange, compact = false }: Up
     };
   }, [photo]);
 
-  const validateAndSetFile = (file: File) => {
+  const validateAndSetFile = async (file: File) => {
     setError(null);
-
-    const validExtensions = ["jpg", "jpeg", "png", "heic", "heif"];
-    const fileExtension = file.name.split(".").pop()?.toLowerCase() || "";
-    const isAcceptedType =
-      validExtensions.includes(fileExtension) ||
-      file.type.startsWith("image/jpeg") ||
-      file.type.startsWith("image/png");
-
-    if (!isAcceptedType) {
-      setError("UNSUPPORTED FORMAT. PLEASE USE JPG, PNG, OR HEIC.");
+    setIsProcessing(true);
+    const result = validateImage(file);
+    if (!result.valid) {
+      setError(result.error || "INVALID FILE.");
+      setIsProcessing(false);
       return;
     }
 
-    const maxSize = 15 * 1024 * 1024;
-    if (file.size > maxSize) {
-      setError("FILE OVERFLOW. MAXIMUM SIZE ALLOWED IS 15 MB.");
-      return;
+    try {
+      const normalizedFile = await convertHeic(file);
+      onPhotoChange(normalizedFile);
+      // Trigger parent crop modal
+      onCropRequest();
+    } catch (err) {
+      console.error("HEIC conversion failed:", err);
+      setError("FAILED TO PROCESS PHOTO.");
+    } finally {
+      setIsProcessing(false);
     }
-
-    onPhotoChange(file);
   };
 
   const handleDrag = (e: React.DragEvent) => {
@@ -84,6 +93,12 @@ export default function UploadZone({ photo, onPhotoChange, compact = false }: Up
     fileInputRef.current?.click();
   };
 
+  const handleRemove = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onPhotoChange(null);
+    onCroppedImageChange(null);
+  };
+
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return "0 B";
     const k = 1024;
@@ -92,13 +107,16 @@ export default function UploadZone({ photo, onPhotoChange, compact = false }: Up
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
   };
 
+  // Determine display URL: cropped preview if available, otherwise original fallback preview
+  const displayUrl = croppedPreviewUrl || previewUrl;
+
   return (
     <div className="w-full">
       <input
         ref={fileInputRef}
         type="file"
         className="hidden"
-        accept=".jpg,.jpeg,.png,.heic,.heif,image/jpeg,image/png"
+        accept=".jpg,.jpeg,.png,.webp,.heic,.heif,image/jpeg,image/png,image/webp,image/heic,image/heif"
         onChange={handleFileInput}
       />
 
@@ -133,7 +151,7 @@ export default function UploadZone({ photo, onPhotoChange, compact = false }: Up
           {/* Text Description */}
           <div className="text-left">
             <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-warm-white">
-              Drop your photo here or <span className="text-hot-pink group-hover:text-bright-yellow underline transition-colors">click to browse</span>
+              {isProcessing ? "Processing..." : <>Drop your photo here or <span className="text-hot-pink group-hover:text-bright-yellow underline transition-colors">click to browse</span></>}
             </p>
             <p className="font-mono text-[8px] text-warm-white/40 uppercase tracking-widest mt-0.5">
               JPG, PNG, WEBP or HEIC • Max 15MB
@@ -141,40 +159,47 @@ export default function UploadZone({ photo, onPhotoChange, compact = false }: Up
           </div>
         </div>
       ) : (
-        <div className={`border border-warm-white/20 bg-teal-deep/20 relative flex items-center gap-4 rounded-xl ${
-          compact ? "p-3" : "flex-col sm:flex-row p-6"
-        }`}>
-          {previewUrl && (
-            <div className="relative w-12 h-12 rounded-lg bg-teal-deep/40 border border-warm-white/10 overflow-hidden shrink-0 flex items-center justify-center">
+        <div className="border border-warm-white/15 bg-teal-deep/30 rounded-2xl p-4 flex items-center gap-4 relative">
+          {displayUrl && (
+            <div 
+              onClick={onCropRequest}
+              title="Click to adjust / crop photo"
+              className="relative w-12 aspect-[4/5] rounded-lg bg-teal-deep/40 border border-warm-white/10 overflow-hidden shrink-0 flex items-center justify-center cursor-pointer hover:border-hot-pink transition-all duration-150 group"
+            >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={previewUrl}
+                src={displayUrl}
                 alt="Selected preview"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
               />
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-warm-white">
+                  <path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"/>
+                  <path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"/>
+                </svg>
+              </div>
             </div>
           )}
           <div className="flex-1 text-left min-w-0">
             <p className="font-mono text-[9px] uppercase tracking-widest text-warm-white/40 font-bold">
               PHOTO UPLOADED
             </p>
-            <p className="font-mono text-[10px] font-bold text-warm-white truncate max-w-50">
+            <p className="font-mono text-[10px] font-bold text-warm-white truncate max-w-40">
               {photo.name}
             </p>
-            <p className="font-mono text-[8px] text-warm-white/60 uppercase tracking-wider">
+            <p className="font-mono text-[8px] text-warm-white/65 uppercase tracking-wider">
               SIZE: {formatFileSize(photo.size)}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onPhotoChange(null);
-            }}
-            className="font-mono text-[9px] uppercase tracking-widest text-hot-pink hover:text-bright-yellow font-bold underline transition-colors shrink-0"
-          >
-            Replace
-          </button>
+          <div className="shrink-0">
+            <button
+              type="button"
+              onClick={handleRemove}
+              className="font-mono text-[9px] uppercase tracking-widest text-hot-pink hover:text-bright-yellow font-bold underline transition-colors"
+            >
+              Remove
+            </button>
+          </div>
         </div>
       )}
 
