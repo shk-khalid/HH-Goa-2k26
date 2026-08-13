@@ -47,6 +47,12 @@ function BuildPageContent() {
           });
       setCardUuid(uuid);
     }
+
+    // Restore cropped photo from localStorage if present
+    const savedPhoto = localStorage.getItem("hh-goa-cropped-photo");
+    if (savedPhoto) {
+      setCroppedImage(savedPhoto);
+    }
   }, [searchParams]);
 
   // Modal crop states
@@ -119,11 +125,23 @@ function BuildPageContent() {
       const croppedBlob = await cropImage(originalUrl, croppedAreaPixels);
       if (croppedBlob) {
         const croppedUrl = URL.createObjectURL(croppedBlob);
-        if (croppedImage) {
+        if (croppedImage && !croppedImage.startsWith("data:")) {
           URL.revokeObjectURL(croppedImage);
         }
         setCroppedImage(croppedUrl);
         setIsModalOpen(false);
+
+        // Convert blob to base64 Data URL and store in localStorage for edit state restoration
+        const reader = new FileReader();
+        reader.readAsDataURL(croppedBlob);
+        reader.onloadend = () => {
+          const base64data = reader.result as string;
+          try {
+            localStorage.setItem("hh-goa-cropped-photo", base64data);
+          } catch (e) {
+            console.warn("localStorage quota exceeded, photo not saved for edit restoration:", e);
+          }
+        };
       }
     } catch (err) {
       console.error("Failed to crop image:", err);
@@ -140,8 +158,8 @@ function BuildPageContent() {
   return (
     <div className="flex flex-col min-h-screen bg-teal-deep text-warm-white font-sans selection:bg-warm-white selection:text-teal-deep overflow-x-hidden">
       {/* Floating Island Header */}
-      <header className="w-full max-w-7xl mx-auto px-6 pt-4 sm:pt-6 relative z-30">
-        <div className="w-full backdrop-blur-md bg-teal-deep/40 border border-warm-white/10 shadow-[0_10px_35px_rgba(0,0,0,0.25)] rounded-2xl px-6 py-3 flex justify-between items-center text-warm-white">
+      <header className="w-full max-w-7xl mx-auto px-6 pt-3 sm:pt-4 relative z-30">
+        <div className="w-full backdrop-blur-md bg-teal-deep/40 border border-warm-white/10 shadow-[0_10px_35px_rgba(0,0,0,0.25)] rounded-2xl px-6 py-2.5 flex justify-between items-center text-warm-white">
           <div className="flex items-center gap-4">
             <Logo />
             <span className="h-4 border-l border-warm-white/20"></span>
@@ -161,170 +179,155 @@ function BuildPageContent() {
       </header>
 
       {/* Main Content */}
-      <main className={`flex-1 max-w-lg w-full mx-auto px-6 z-30 flex flex-col justify-center items-center transition-all duration-300 ${
-        isGenerating ? "py-3 md:py-4 gap-3" : "py-6 md:py-10 gap-6"
-      }`}>
-        {isGenerating ? (
-          <div className="flex flex-col gap-3 w-full max-w-xl mx-auto items-center">
-            {/* Editorial Heading for Preview */}
-            <div className="text-center space-y-2 max-w-md">
-              <h1 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-tight leading-none text-bright-yellow">
-                YOUR BUILDER ID
-              </h1>
-              <p className="font-mono text-[10px] text-bright-yellow/85 tracking-wider">
-                Preview your HH Goa 2026 developer profile card
-              </p>
-            </div>
+      <main className="flex-1 max-w-lg w-full mx-auto px-6 z-30 flex flex-col justify-center items-center py-3 md:py-4 gap-4">
+        <div className="w-full flex flex-col gap-4 items-center">
+          
+          {/* Header Content */}
+          <div className="text-center space-y-1.5 max-w-md">
+            <h1 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight leading-none text-bright-yellow">
+              Hacker Goa House Builder Pass
+            </h1>
+            <p className="font-mono text-[9px] text-bright-yellow/85 tracking-wider">
+              Personalize & generate your official builder pass for Hacker House Goa 2026
+            </p>
+          </div>
 
-            {/* Skeleton Card Loader */}
-            <div className="w-full max-w-72.5 sm:max-w-82.5 aspect-3/4 bg-[#062421]/60 border border-warm-white/10 rounded-2xl flex flex-col items-center justify-center gap-3 animate-pulse shadow-2xl relative overflow-hidden pointer-events-none">
-              <svg className="w-7 h-7 text-hot-pink animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-              </svg>
-              <span className="font-mono text-[7px] tracking-[0.25em] text-warm-white uppercase font-bold bg-[#0b3b35] border border-warm-white/15 rounded-lg px-3 py-1.5 shadow-lg">
-                Generating Pass...
-              </span>
-            </div>
+          {/* Badges / Flow indicators */}
+          <div className="flex gap-2 font-mono text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">
+            <span className="bg-hot-pink/10 border border-hot-pink/20 text-hot-pink px-2.5 py-0.5 rounded-full flex items-center gap-1.5 shadow-sm">
+              <Camera className="w-3 h-3 text-hot-pink" />
+              PHOTO SNAP
+            </span>
+            <span className="bg-hot-pink/10 border border-hot-pink/20 text-hot-pink px-2.5 py-0.5 rounded-full flex items-center gap-1.5 shadow-sm">
+              <Zap className="w-3 h-3 text-hot-pink" />
+              GENERATE PASS
+            </span>
+            <span className="bg-hot-pink/10 border border-hot-pink/20 text-hot-pink px-2.5 py-0.5 rounded-full flex items-center gap-1.5 shadow-sm">
+              <Share2 className="w-3 h-3 text-hot-pink" />
+              BROADCAST
+            </span>
+          </div>
 
-            {/* Skeletons for buttons */}
-            <div className="flex flex-col gap-2.5 w-full max-w-72.5 sm:max-w-82.5 font-mono mt-2 animate-pulse">
-              <div className="w-full h-11 bg-warm-white/5 border border-warm-white/10 rounded-xl" />
-              <div className="flex gap-2 w-full">
-                <div className="flex-1 h-11 bg-warm-white/5 border border-warm-white/10 rounded-xl" />
-                <div className="flex-1 h-11 bg-warm-white/5 border border-warm-white/10 rounded-xl" />
-                <div className="flex-1 h-11 bg-warm-white/5 border border-warm-white/10 rounded-xl" />
-              </div>
-            </div>
-
-            {/* Offscreen card rendering and Supabase upload trigger */}
-            <div style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
-              <BuilderPreview
-                photo={previewPhotoFile}
-                name={name}
-                role={role}
-                stack={stack}
-                builderId={cardUuid}
-                onBackToEdit={() => setIsGenerating(false)}
-                onRenderComplete={(id) => {
-                  router.push(
-                    `/preview?id=${id}&name=${encodeURIComponent(name)}&role=${encodeURIComponent(role)}&stack=${encodeURIComponent(stack)}`
-                  );
+          {/* Form Card Container */}
+          <form 
+            onSubmit={handleBuildId} 
+            autoComplete="off"
+            className="w-full backdrop-blur-md bg-teal-deep/30 border border-warm-white/10 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col gap-3.5"
+          >
+            {/* Photo Upload Zone */}
+            <div className="flex flex-col gap-1.5">
+              <label className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
+                Builder Photo
+              </label>
+              <UploadZone 
+                photo={photo} 
+                onPhotoChange={setPhoto} 
+                croppedPreviewUrl={croppedImage}
+                onCroppedImageChange={(val) => {
+                  setCroppedImage(val);
+                  if (!val) {
+                    localStorage.removeItem("hh-goa-cropped-photo");
+                  }
                 }}
+                onCropRequest={() => setIsModalOpen(true)}
+                compact={true} 
               />
             </div>
-          </div>
-        ) : (
-          <div className="w-full flex flex-col gap-6 items-center">
-            
-            {/* Header Content */}
-            <div className="text-center space-y-2 max-w-md">
-              <h1 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-tight leading-none text-bright-yellow">
-                Hacker Goa House Builder Pass
-              </h1>
-              <p className="font-mono text-[10px] text-bright-yellow/85 tracking-wider">
-                Personalize & generate your official builder pass for Hacker House Goa 2026
-              </p>
+
+            {/* Text Input Block: Name */}
+            <div className="flex flex-col gap-1">
+              <label className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
+                Full Name
+              </label>
+              <input
+                type="text"
+                required
+                disabled={isGenerating}
+                autoComplete="off"
+                placeholder="e.g. Michael Scott"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full bg-[#062421] border border-warm-white/10 rounded-xl px-4 py-2.5 text-xs font-mono text-warm-white placeholder-warm-white/30 focus:border-hot-pink transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+              />
             </div>
 
-            {/* Badges / Flow indicators */}
-            <div className="flex gap-2 font-mono text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">
-              <span className="bg-hot-pink/10 border border-hot-pink/20 text-hot-pink px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
-                <Camera className="w-3 h-3 text-hot-pink" />
-                PHOTO SNAP
-              </span>
-              <span className="bg-hot-pink/10 border border-hot-pink/20 text-hot-pink px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
-                <Zap className="w-3 h-3 text-hot-pink" />
-                GENERATE PASS
-              </span>
-              <span className="bg-hot-pink/10 border border-hot-pink/20 text-hot-pink px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
-                <Share2 className="w-3 h-3 text-hot-pink" />
-                BROADCAST
-              </span>
+            {/* Text Input Block: Role */}
+            <div className="flex flex-col gap-1">
+              <label className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
+                Builder Role
+              </label>
+              <input
+                type="text"
+                required
+                disabled={isGenerating}
+                autoComplete="off"
+                placeholder="e.g. Full Stack Developer"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className="w-full bg-[#062421] border border-warm-white/10 rounded-xl px-4 py-2.5 text-xs font-mono text-warm-white placeholder-warm-white/30 focus:border-hot-pink transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+              />
             </div>
 
-            {/* Form Card Container */}
-            <form 
-              onSubmit={handleBuildId} 
-              autoComplete="off"
-              className="w-full backdrop-blur-md bg-teal-deep/30 border border-warm-white/10 rounded-2xl p-5 sm:p-6 shadow-2xl flex flex-col gap-4"
+            {/* Text Input Block: Tech Stack */}
+            <div className="flex flex-col gap-1">
+              <label className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
+                Tech Stack (Comma-separated, max 3)
+              </label>
+              <input
+                type="text"
+                required
+                disabled={isGenerating}
+                autoComplete="off"
+                placeholder="e.g. React, Next.js, Tailwind"
+                value={stack}
+                onChange={(e) => setStack(e.target.value)}
+                className="w-full bg-[#062421] border border-warm-white/10 rounded-xl px-4 py-2.5 text-xs font-mono text-warm-white placeholder-warm-white/30 focus:border-hot-pink transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+              />
+            </div>
+
+            {/* Primary submit action */}
+            <button
+              type="submit"
+              disabled={isSubmitDisabled || isGenerating}
+              className={`w-full py-2.5 mt-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.2em] rounded-xl flex items-center justify-center gap-2 border transition-all duration-150 active:scale-[0.98] ${
+                isSubmitDisabled || isGenerating
+                  ? "bg-teal-deep/20 border-warm-white/10 text-warm-white/30 cursor-not-allowed"
+                  : "bg-hot-pink hover:bg-bright-yellow text-black border-hot-pink hover:border-bright-yellow cursor-pointer"
+              }`}
             >
-              {/* Photo Upload Zone */}
-              <div className="flex flex-col gap-1.5">
-                <label className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
-                  Builder Photo
-                </label>
-                <UploadZone 
-                  photo={photo} 
-                  onPhotoChange={setPhoto} 
-                  croppedPreviewUrl={croppedImage}
-                  onCroppedImageChange={setCroppedImage}
-                  onCropRequest={() => setIsModalOpen(true)}
-                  compact={true} 
-                />
-              </div>
+              {isGenerating ? (
+                <>
+                  <svg className="w-3.5 h-3.5 text-black animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                  </svg>
+                  <span>Generating...</span>
+                </>
+              ) : (
+                <>
+                  <span>Generate Pass</span>
+                  <span>→</span>
+                </>
+              )}
+            </button>
+          </form>
+        </div>
 
-              {/* Text Input Block: Name */}
-              <div className="flex flex-col gap-1.5">
-                <label className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  autoComplete="off"
-                  placeholder="e.g. Khalid Shaikh"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-[#062421] border border-warm-white/10 rounded-xl px-4 py-3 text-xs font-mono text-warm-white placeholder-warm-white/30 focus:border-hot-pink transition-all duration-150"
-                />
-              </div>
-
-              {/* Text Input Block: Role */}
-              <div className="flex flex-col gap-1.5">
-                <label className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
-                  Builder Role
-                </label>
-                <input
-                  type="text"
-                  required
-                  autoComplete="off"
-                  placeholder="e.g. Full Stack Developer"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full bg-[#062421] border border-warm-white/10 rounded-xl px-4 py-3 text-xs font-mono text-warm-white placeholder-warm-white/30 focus:border-hot-pink transition-all duration-150"
-                />
-              </div>
-
-              {/* Text Input Block: Tech Stack */}
-              <div className="flex flex-col gap-1.5">
-                <label className="font-mono text-[8px] uppercase tracking-[0.2em] text-warm-white/60 font-bold">
-                  Tech Stack (Comma-separated, max 3)
-                </label>
-                <input
-                  type="text"
-                  required
-                  autoComplete="off"
-                  placeholder="e.g. React.js, Next.js, Express.js"
-                  value={stack}
-                  onChange={(e) => setStack(e.target.value)}
-                  className="w-full bg-[#062421] border border-warm-white/10 rounded-xl px-4 py-3 text-xs font-mono text-warm-white placeholder-warm-white/30 focus:border-hot-pink transition-all duration-150"
-                />
-              </div>
-
-              {/* Primary submit action */}
-              <button
-                type="submit"
-                disabled={isSubmitDisabled}
-                className={`w-full py-3 mt-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] rounded-xl flex items-center justify-center gap-2 border transition-all duration-150 active:scale-[0.98] ${
-                  isSubmitDisabled
-                    ? "bg-teal-deep/20 border-warm-white/10 text-warm-white/30 cursor-not-allowed"
-                    : "bg-hot-pink hover:bg-bright-yellow text-black border-hot-pink hover:border-bright-yellow cursor-pointer"
-                }`}
-              >
-                <span>Generate Pass</span>
-                <span>→</span>
-              </button>
-            </form>
+        {/* Offscreen card rendering and Supabase upload trigger */}
+        {isGenerating && (
+          <div style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
+            <BuilderPreview
+              photo={previewPhotoFile}
+              name={name}
+              role={role}
+              stack={stack}
+              builderId={cardUuid}
+              onBackToEdit={() => setIsGenerating(false)}
+              onRenderComplete={(id) => {
+                router.push(
+                  `/preview?id=${id}&name=${encodeURIComponent(name)}&role=${encodeURIComponent(role)}&stack=${encodeURIComponent(stack)}`
+                );
+              }}
+            />
           </div>
         )}
       </main>
