@@ -21,14 +21,23 @@ function PreviewContent() {
   const [copied, setCopied] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
-  const publicImageUrl = `https://fiznydjywflsffleeoop.supabase.co/storage/v1/object/public/id-card/${id}.png`;
+  const [localImageUrl, setLocalImageUrl] = useState<string>("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && id) {
+      const savedImage = sessionStorage.getItem(`hh-goa-pass-${id}`);
+      if (savedImage) {
+        setLocalImageUrl(savedImage);
+      }
+    }
+  }, [id]);
 
   const handleDownload = () => {
+    if (!localImageUrl) return;
     const filename = `${name.toLowerCase().replace(/[^a-z0-9]/g, "-")}-hhgoa-pass.png`;
     const link = document.createElement("a");
     link.download = filename;
-    link.href = publicImageUrl;
-    link.target = "_blank";
+    link.href = localImageUrl;
     link.click();
   };
 
@@ -51,17 +60,6 @@ function PreviewContent() {
 
   const handleShareX = () => {
     setIsShareModalOpen(true);
-  };
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(publicImageUrl)
-      .then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      })
-      .catch((err) => {
-        console.error("Failed to copy link:", err);
-      });
   };
 
   const handleEdit = () => {
@@ -107,11 +105,19 @@ function PreviewContent() {
 
         {/* Visible static image preview */}
         <div className="w-full flex justify-center items-center">
-          <img
-            src={publicImageUrl}
-            alt="HH Goa Builder Pass"
-            className="w-full max-w-72.5 sm:max-w-82.5 aspect-3/4 object-contain shadow-2xl rounded-2xl animate-in fade-in duration-300 border border-warm-white/10"
-          />
+          {localImageUrl ? (
+            <img
+              src={localImageUrl}
+              alt="HH Goa Builder Pass"
+              className="w-full max-w-72.5 sm:max-w-82.5 aspect-3/4 object-contain shadow-2xl rounded-2xl animate-in fade-in duration-300 border border-warm-white/10"
+            />
+          ) : (
+            <div className="w-full max-w-72.5 sm:max-w-82.5 aspect-3/4 bg-[#062421]/60 border border-warm-white/10 rounded-2xl flex flex-col items-center justify-center gap-3 animate-pulse shadow-2xl">
+              <span className="font-mono text-[7px] tracking-[0.25em] text-warm-white uppercase font-bold bg-[#0b3b35] border border-warm-white/15 rounded-lg px-3 py-1.5 shadow-lg">
+                Loading Pass...
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Actions row */}
@@ -127,31 +133,14 @@ function PreviewContent() {
             Post to X
           </button>
           
-          {/* Secondary Action Row: Download, Copy, and Edit */}
+          {/* Secondary Action Row: Download and Edit */}
           <div className="flex gap-2 w-full">
             <button
               onClick={handleDownload}
               className="flex-1 py-3.5 font-mono text-[9px] font-bold uppercase tracking-widest rounded-xl bg-transparent text-warm-white border border-warm-white/30 hover:border-hot-pink hover:text-hot-pink transition-all duration-150 active:scale-[0.97] flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <Download className="w-3.5 h-3.5" />
-              Pass
-            </button>
-
-            <button
-              onClick={handleCopyLink}
-              className="flex-1 py-3.5 font-mono text-[9px] font-bold uppercase tracking-widest rounded-xl bg-transparent text-warm-white border border-warm-white/30 hover:border-hot-pink hover:text-hot-pink transition-all duration-150 active:scale-[0.97] flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              {copied ? (
-                <>
-                  <Check className="w-3.5 h-3.5 text-green-500" />
-                  Copied
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3.5 h-3.5" />
-                  Link
-                </>
-              )}
+              Download Pass
             </button>
 
             <button
@@ -162,7 +151,7 @@ function PreviewContent() {
                 <path d="M12 20h9"/>
                 <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
               </svg>
-              Edit
+              Edit Pass
             </button>
           </div>
         </div>

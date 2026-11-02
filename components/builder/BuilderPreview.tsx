@@ -6,7 +6,7 @@ import { toPng } from "html-to-image";
 import { classifyBuilder } from "../../lib/image/classifyBuilder";
 import { Download, Share2, Copy, Check, Loader2, Edit3, Paperclip } from "lucide-react";
 
-import { supabase } from "@/lib/supabase";
+
 
 interface BuilderPreviewProps {
   photo: File | null;
@@ -47,29 +47,17 @@ export default function BuilderPreview({
   // Handle card generated event from BuilderCard callback (fires when all assets are loaded)
   const handleCardGenerated = async (dataUrl: string) => {
     try {
-      // Convert data URL to Blob for Supabase upload
-      const res = await fetch(dataUrl);
-      const blob = await res.blob();
-
-      // Upload the entire finished ID card PNG to Supabase storage
-      const { error } = await supabase.storage
-        .from("id-card")
-        .upload(`${builderId}.png`, blob, {
-          contentType: "image/png",
-          upsert: true,
-        });
-
-      if (error) {
-        throw error;
+      // Bypass Supabase upload completely and store dataUrl locally in sessionStorage
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(`hh-goa-pass-${builderId}`, dataUrl);
       }
-
+      
       setRenderedImageUrl(dataUrl);
       if (onRenderComplete) {
         onRenderComplete(builderId);
       }
     } catch (err: any) {
-      console.error("Oops, card upload failed:", err);
-      // Fallback: show the rendered image locally even if upload fails
+      console.error("Oops, card local save failed:", err);
       setRenderedImageUrl(dataUrl);
       if (onRenderComplete) {
         onRenderComplete(builderId);
