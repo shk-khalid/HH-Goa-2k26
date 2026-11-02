@@ -4,7 +4,7 @@ import React, { useRef, useState, useEffect } from "react";
 import BuilderCard from "../card/BuilderCard";
 import { toPng } from "html-to-image";
 import { classifyBuilder } from "../../lib/image/classifyBuilder";
-import { Download, Share2, Copy, Check, Loader2, Edit3, Paperclip } from "lucide-react";
+import { Download, Loader2, Edit3, Paperclip } from "lucide-react";
 
 
 
@@ -31,7 +31,6 @@ export default function BuilderPreview({
   
   const [renderedImageUrl, setRenderedImageUrl] = useState<string | null>(null);
   const [isRendering, setIsRendering] = useState(true);
-  const [copied, setCopied] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const exportOptions = {
@@ -47,7 +46,7 @@ export default function BuilderPreview({
   // Handle card generated event from BuilderCard callback (fires when all assets are loaded)
   const handleCardGenerated = async (dataUrl: string) => {
     try {
-      // Bypass Supabase upload completely and store dataUrl locally in sessionStorage
+      // Keep the rendered pass in this browser only.
       if (typeof window !== "undefined") {
         sessionStorage.setItem(`hh-goa-pass-${builderId}`, dataUrl);
       }
@@ -97,18 +96,6 @@ export default function BuilderPreview({
   const handleShareX = () => {
     // Open the helper modal informing them how to download and attach it
     setIsShareModalOpen(true);
-  };
-
-  const handleCopyLink = () => {
-    const publicUrl = `https://fiznydjywflsffleeoop.supabase.co/storage/v1/object/public/id-card/${builderId}.png`;
-    navigator.clipboard.writeText(publicUrl)
-      .then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      })
-      .catch((err) => {
-        console.error("Failed to copy link:", err);
-      });
   };
 
   const builderClass = classifyBuilder(role, stack);
@@ -184,7 +171,7 @@ export default function BuilderPreview({
             Post to X
           </button>
           
-          {/* Secondary Action Row: Download, Copy, and Edit */}
+          {/* Secondary Action Row: Download and Edit */}
           <div className="flex gap-2 w-full">
             <button
               onClick={handleDownload}
@@ -192,23 +179,6 @@ export default function BuilderPreview({
             >
               <Download className="w-3.5 h-3.5" />
               Pass
-            </button>
-
-            <button
-              onClick={handleCopyLink}
-              className="flex-1 py-3.5 font-mono text-[9px] font-bold uppercase tracking-widest rounded-xl bg-transparent text-warm-white border border-warm-white/30 hover:border-hot-pink hover:text-hot-pink transition-all duration-150 active:scale-[0.97] flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              {copied ? (
-                <>
-                  <Check className="w-3.5 h-3.5 text-green-500" />
-                  Copied
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3.5 h-3.5" />
-                  Link
-                </>
-              )}
             </button>
 
             <button

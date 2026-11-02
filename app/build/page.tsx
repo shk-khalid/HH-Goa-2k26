@@ -312,7 +312,7 @@ function BuildPageContent() {
           </form>
         </div>
 
-        {/* Offscreen card rendering and Supabase upload trigger */}
+        {/* Offscreen card rendering */}
         {isGenerating && (
           <div style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
             <BuilderPreview

@@ -137,8 +137,7 @@ export default function BuilderCard({
     ? `HHGOA-${customBuilderId.split("-").pop()?.toUpperCase() || "2A95"}`
     : builderId;
 
-  // QR Code URL pointing to profile using the unique UUID
-  const shareData = `https://fiznydjywflsffleeoop.supabase.co/storage/v1/object/public/id-card/${customBuilderId || generatedId}.png`;
+  const shareData = "https://goaframes.vercel.app/";
   
   useEffect(() => {
     import("qrcode").then((QRCode) => {

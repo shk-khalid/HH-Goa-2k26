@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Logo from "@/components/shared/Logo";
 import Footer from "@/components/shared/Footer";
 import { classifyBuilder } from "@/lib/image/classifyBuilder";
-import { Download, Copy, Check, Paperclip } from "lucide-react";
+import { Download, Paperclip } from "lucide-react";
 
 function PreviewContent() {
   const router = useRouter();
@@ -18,7 +18,6 @@ function PreviewContent() {
   const stack = searchParams.get("stack") || "";
 
   const builderClass = classifyBuilder(role, stack);
-  const [copied, setCopied] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const [localImageUrl, setLocalImageUrl] = useState<string>("");
